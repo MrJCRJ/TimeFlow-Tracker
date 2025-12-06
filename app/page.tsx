@@ -7,6 +7,7 @@ import PendingQueueMonitor from "@/components/PendingQueueMonitor";
 import AutoAnalyzer from "@/components/AutoAnalyzer";
 import DataManager from "@/components/DataManager";
 
+// Force rebuild - v2
 export default function HomePage() {
   return (
     <main className="min-h-screen pb-20">
