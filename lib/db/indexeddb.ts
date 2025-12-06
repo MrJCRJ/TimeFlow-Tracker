@@ -90,10 +90,91 @@ export async function addFeedback(
   return await db.feedbacks.add(feedback);
 }
 
-export async function clearAllData(): Promise<void> {
+export async function clearAllData() {
   await db.activities.clear();
   await db.feedbacks.clear();
   await db.pendingInputs.clear();
+}
+
+// Funções específicas para fluxo de atividades
+export async function getOngoingActivity() {
+  return await db.activities
+    .filter(a => !a.endedAt)
+    .first();
+}
+
+export async function endOngoingActivity() {
+  const ongoing = await getOngoingActivity();
+  if (!ongoing || !ongoing.id) return null;
+
+  const endedAt = new Date();
+  const durationMinutes = Math.round(
+    (endedAt.getTime() - ongoing.startedAt.getTime()) / 60000
+  );
+
+  await db.activities.update(ongoing.id, {
+    endedAt,
+    durationMinutes,
+  });
+
+  return {
+    ...ongoing,
+    endedAt,
+    durationMinutes,
+  };
+}
+
+export async function startNewActivity(
+  title: string,
+  summary?: string,
+  category?: string,
+  aiResponse?: string
+) {
+  // Encerra atividade em andamento
+  const previousActivity = await endOngoingActivity();
+
+  // Cria nova atividade
+  const id = await db.activities.add({
+    title,
+    summary,
+    category,
+    aiResponse,
+    startedAt: new Date(),
+  });
+
+  return {
+    id,
+    previousActivity,
+  };
+}
+
+// Funções para pending inputs
+export async function addPendingInput(text: string) {
+  const id = await db.pendingInputs.add({
+    text,
+    timestamp: new Date(),
+    processed: false,
+  });
+  return id;
+}
+
+export async function getPendingInputs(processedOnly: boolean = false) {
+  if (processedOnly) {
+    return await db.pendingInputs.filter(p => p.processed === true).toArray();
+  }
+  return await db.pendingInputs.filter(p => p.processed === false).toArray();
+}
+
+export async function markPendingAsProcessed(id: number, result?: string) {
+  await db.pendingInputs.update(id, {
+    processed: true,
+    processedAt: new Date(),
+    result,
+  });
+}
+
+export async function deletePendingInput(id: number) {
+  await db.pendingInputs.delete(id);
 }
 
 export async function exportAllData() {

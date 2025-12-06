@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { 
+  getPendingInputs, 
+  markPendingAsProcessed,
+  deletePendingInput,
+  startNewActivity 
+} from "@/lib/db/indexeddb";
+import { processActivityWithAI } from "@/lib/ai-service";
 
 /**
  * Componente que monitora a fila de pendências
@@ -16,11 +23,10 @@ export default function PendingQueueMonitor() {
   useEffect(() => {
     const checkPending = async () => {
       try {
-        const response = await fetch("/api/pending-queue");
-        const data = await response.json();
+        const pending = await getPendingInputs(false);
 
-        if (data.pendingCount > 0 && !processing) {
-          setPendingCount(data.pendingCount);
+        if (pending.length > 0 && !processing) {
+          setPendingCount(pending.length);
           // Tenta processar automaticamente
           await tryProcess();
         }
@@ -44,22 +50,56 @@ export default function PendingQueueMonitor() {
     setProcessing(true);
 
     try {
-      const response = await fetch("/api/pending-queue", {
-        method: "PUT",
-      });
+      const pendingItems = await getPendingInputs(false);
 
-      const result = await response.json();
+      if (pendingItems.length === 0) {
+        setProcessing(false);
+        return;
+      }
 
-      if (result.processed > 0) {
-        setSummary(result.summary);
+      let processed = 0;
+      const results: string[] = [];
+
+      for (const item of pendingItems) {
+        try {
+          // Processa com IA
+          const aiResult = await processActivityWithAI(item.text, {
+            todayStats: {
+              activitiesCount: 0,
+              totalMinutes: 0,
+            },
+          });
+          
+          // Cria atividade
+          await startNewActivity(
+            item.text,
+            aiResult.summary,
+            aiResult.category,
+            aiResult.response
+          );
+
+          // Marca como processado
+          if (item.id) {
+            await markPendingAsProcessed(item.id, aiResult.response);
+          }
+
+          processed++;
+          results.push(`✅ ${aiResult.summary || item.text}`);
+        } catch (error) {
+          console.error("Erro ao processar item:", error);
+          // Mantém na fila se falhar
+        }
+      }
+
+      if (processed > 0) {
+        setSummary(
+          `Processados ${processed} ${processed === 1 ? "item" : "itens"}:\n\n${results.join("\n")}`
+        );
         setShowSummary(true);
         setPendingCount(0);
 
         // Auto-hide após 15 segundos
         setTimeout(() => setShowSummary(false), 15000);
-
-        // Atualiza a página
-        window.dispatchEvent(new Event("activityUpdated"));
       }
     } catch (error) {
       console.error("Erro ao processar pendências:", error);

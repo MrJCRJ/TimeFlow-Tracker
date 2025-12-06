@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { startNewActivity, addPendingInput } from "@/lib/db/indexeddb";
+import { processActivityWithAI } from "@/lib/ai-service";
+import { useTodayActivities } from "@/lib/hooks/useDatabase";
 
 export default function ActivityFlow() {
   const [title, setTitle] = useState("");
@@ -8,6 +11,8 @@ export default function ActivityFlow() {
   const [chatResponse, setChatResponse] = useState<string | null>(null);
   const [showChatBubble, setShowChatBubble] = useState(false);
   const [fallbackWarning, setFallbackWarning] = useState<string | null>(null);
+
+  const todayActivities = useTodayActivities();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -36,14 +41,8 @@ export default function ActivityFlow() {
 
       // Se IA estiver offline, adiciona à fila e informa usuário
       if (intent.usingFallback) {
-        // Adiciona à fila de pendências
-        await fetch("/api/pending-queue", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: input }),
-        });
+        // Adiciona à fila de pendências no IndexedDB
+        await addPendingInput(input);
 
         setFallbackWarning(
           intent.fallbackMessage ||
@@ -85,20 +84,44 @@ export default function ActivityFlow() {
           setTimeout(() => setShowChatBubble(false), 8000);
         }
       }
-      // Se for atividade → registra normalmente
+      // Se for atividade → registra localmente com IA
       else {
-        const response = await fetch("/api/flow", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ title: input }),
-        });
+        // Prepara contexto para IA
+        const finishedActivities = todayActivities?.filter(a => a.endedAt) || [];
+        const ongoingActivity = todayActivities?.find(a => !a.endedAt);
+        
+        const todayStats = {
+          activitiesCount: finishedActivities.length,
+          totalMinutes: finishedActivities.reduce(
+            (sum, a) => sum + (a.durationMinutes || 0),
+            0
+          ),
+        };
 
-        if (response.ok) {
-          setTitle("");
-          window.dispatchEvent(new Event("activityUpdated"));
-        }
+        const previousActivity = ongoingActivity ? {
+          title: ongoingActivity.title,
+          summary: ongoingActivity.summary,
+          category: ongoingActivity.category,
+          durationMinutes: ongoingActivity.durationMinutes || 0,
+        } : undefined;
+
+        // Processa com IA
+        console.log("🤖 Processando com IA:", input);
+        const aiResult = await processActivityWithAI(input, {
+          previousActivity,
+          todayStats,
+        });
+        console.log("✅ IA respondeu:", aiResult);
+
+        // Salva no IndexedDB
+        await startNewActivity(
+          input,
+          aiResult.summary,
+          aiResult.category,
+          aiResult.response
+        );
+
+        setTitle("");
       }
     } catch (error) {
       console.error("Erro ao processar:", error);
