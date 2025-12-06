@@ -28,12 +28,14 @@ Este erro ocorre quando o navegador ainda tem cache antigo do Service Worker ten
 #### 3. **Limpar Cache pelo Navegador**
 
 **Chrome:**
+
 - Ctrl+Shift+Delete
 - Marque "Cached images and files"
 - Selecione "All time"
 - Clique em "Clear data"
 
 **Firefox:**
+
 - Ctrl+Shift+Delete
 - Marque "Cache"
 - Selecione "Everything"
@@ -60,6 +62,7 @@ Este erro ocorre quando o navegador ainda tem cache antigo do Service Worker ten
 
 1. Use o botão **Debug** para confirmar que os dados foram importados
 2. Se os dados estão lá mas não aparecem:
+
    - Faça hard refresh: **Ctrl+Shift+R**
    - Limpe o cache do navegador
    - Reabra o navegador
@@ -95,7 +98,6 @@ Este erro ocorre quando o navegador ainda tem cache antigo do Service Worker ten
 
 1. **Recomendação**: Faça backup primeiro
    - Clique em **Gerenciar Dados** → **💾 Exportar**
-   
 2. Clique em **Gerenciar Dados** → **🗑️ Apagar Tudo**
 3. Confirme duas vezes (segurança)
 4. Todos os dados serão removidos do IndexedDB
@@ -128,6 +130,7 @@ O TimeFlow Tracker **agora funciona perfeitamente** na Vercel e outras plataform
 ### ✅ Pré-requisitos:
 
 1. Configure a variável de ambiente:
+
    ```
    DEEPSEEK_API_KEY=sua-chave-aqui
    ```

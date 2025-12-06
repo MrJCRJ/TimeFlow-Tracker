@@ -19,7 +19,7 @@ const REMOVED_APIS = [
 self.addEventListener('install', (event) => {
   // Força ativação imediata do novo service worker
   self.skipWaiting();
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(urlsToCache))
@@ -28,16 +28,16 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  
+
   // Se for uma API removida, retorna 404 imediatamente sem tentar fazer fetch
   if (REMOVED_APIS.some(api => url.pathname === api)) {
     event.respondWith(
       new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'API removida - use IndexedDB',
           message: 'Esta API foi migrada para IndexedDB. Os dados agora são armazenados localmente no navegador.'
         }),
-        { 
+        {
           status: 404,
           headers: { 'Content-Type': 'application/json' }
         }
@@ -45,7 +45,7 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-  
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => response || fetch(event.request))
