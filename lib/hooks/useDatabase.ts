@@ -19,7 +19,7 @@ export function useTodayActivities() {
 }
 
 export function useFeedbacks() {
-  const feedbacks = useLiveQuery(() => 
+  const feedbacks = useLiveQuery(() =>
     db.feedbacks.orderBy("createdAt").reverse().toArray()
   );
   return feedbacks || [];

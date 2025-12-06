@@ -59,18 +59,20 @@ export async function getAllActivities(): Promise<Activity[]> {
 export async function getTodayActivities(): Promise<Activity[]> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
-  return await db.activities
-    .where("startedAt")
-    .above(today)
-    .toArray();
+
+  return await db.activities.where("startedAt").above(today).toArray();
 }
 
-export async function addActivity(activity: Omit<Activity, "id">): Promise<number> {
+export async function addActivity(
+  activity: Omit<Activity, "id">
+): Promise<number> {
   return await db.activities.add(activity);
 }
 
-export async function updateActivity(id: number, changes: Partial<Activity>): Promise<number> {
+export async function updateActivity(
+  id: number,
+  changes: Partial<Activity>
+): Promise<number> {
   return await db.activities.update(id, changes);
 }
 
@@ -82,7 +84,9 @@ export async function getAllFeedbacks(): Promise<Feedback[]> {
   return await db.feedbacks.orderBy("createdAt").reverse().toArray();
 }
 
-export async function addFeedback(feedback: Omit<Feedback, "id">): Promise<number> {
+export async function addFeedback(
+  feedback: Omit<Feedback, "id">
+): Promise<number> {
   return await db.feedbacks.add(feedback);
 }
 
@@ -149,7 +153,9 @@ export async function importAllData(data: any) {
         text: pending.text,
         timestamp: new Date(pending.timestamp),
         processed: pending.processed || false,
-        processedAt: pending.processedAt ? new Date(pending.processedAt) : undefined,
+        processedAt: pending.processedAt
+          ? new Date(pending.processedAt)
+          : undefined,
         result: pending.result,
       });
     }

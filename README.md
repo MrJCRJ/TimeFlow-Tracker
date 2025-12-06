@@ -13,9 +13,9 @@
 ## ✅ ATUALIZAÇÃO: Agora funciona na Vercel!
 
 > **🎉 Migrado para IndexedDB!**
-> 
+>
 > Dados armazenados no navegador - funciona online E offline!
-> 
+>
 > **Deploy na Vercel funcionando perfeitamente.**
 
 ---

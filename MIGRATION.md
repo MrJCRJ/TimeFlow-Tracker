@@ -5,11 +5,13 @@
 O **TimeFlow Tracker** agora usa **IndexedDB** em vez de SQLite!
 
 ### Antes (SQLite):
+
 - ❌ Não funcionava na Vercel
 - ❌ Dados no servidor
 - ❌ Apenas local
 
 ### Agora (IndexedDB):
+
 - ✅ **Funciona na Vercel!**
 - ✅ **Dados no navegador**
 - ✅ **100% offline**
@@ -68,39 +70,43 @@ Se você já usava a versão SQLite:
 
 ### IndexedDB vs SQLite
 
-| Recurso | SQLite (Antes) | IndexedDB (Agora) |
-|---------|----------------|-------------------|
-| Local server | ✅ Sim | ✅ Sim |
-| Vercel/Netlify | ❌ Não | ✅ Sim |
-| Offline | ✅ Sim | ✅ Sim |
-| Privacidade | ✅ Boa | ✅ Excelente |
-| Portabilidade | ⚠️ Arquivo .db | ✅ Qualquer navegador |
-| Backup | Copiar arquivo | Exportar JSON |
+| Recurso        | SQLite (Antes) | IndexedDB (Agora)     |
+| -------------- | -------------- | --------------------- |
+| Local server   | ✅ Sim         | ✅ Sim                |
+| Vercel/Netlify | ❌ Não         | ✅ Sim                |
+| Offline        | ✅ Sim         | ✅ Sim                |
+| Privacidade    | ✅ Boa         | ✅ Excelente          |
+| Portabilidade  | ⚠️ Arquivo .db | ✅ Qualquer navegador |
+| Backup         | Copiar arquivo | Exportar JSON         |
 
 ---
 
 ## 💡 VANTAGENS DA MUDANÇA
 
 ### 1. **Funciona em Qualquer Lugar**
-   - Vercel ✅
-   - Netlify ✅
-   - Localhost ✅
-   - Qualquer hospedagem ✅
+
+- Vercel ✅
+- Netlify ✅
+- Localhost ✅
+- Qualquer hospedagem ✅
 
 ### 2. **Mais Privado**
-   - Dados nunca saem do navegador
-   - Servidor não vê suas atividades
-   - Apenas API da IA recebe texto (sem salvar)
+
+- Dados nunca saem do navegador
+- Servidor não vê suas atividades
+- Apenas API da IA recebe texto (sem salvar)
 
 ### 3. **Mais Rápido**
-   - Sem chamadas HTTP para banco
-   - Leitura/escrita instantânea
-   - IndexedDB otimizado para navegadores
+
+- Sem chamadas HTTP para banco
+- Leitura/escrita instantânea
+- IndexedDB otimizado para navegadores
 
 ### 4. **PWA Real**
-   - Funciona 100% offline
-   - Instale como app
-   - Sincronização futura (opcional)
+
+- Funciona 100% offline
+- Instale como app
+- Sincronização futura (opcional)
 
 ---
 
@@ -109,6 +115,7 @@ Se você já usava a versão SQLite:
 Agora que funciona na Vercel, posso adicionar:
 
 ### Features Futuras:
+
 - 🔐 **Auth opcional** (Google/GitHub)
 - ☁️ **Sync entre dispositivos** (opcional)
 - 📱 **App mobile** (React Native)
