@@ -1,0 +1,47 @@
+# Dependencies
+node_modules
+
+# Next.js
+.next
+out
+
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# Database
+local.db
+local.db-shm
+local.db-wal
+*.db
+*.db-shm
+*.db-wal
+
+# Build outputs
+dist
+*.tsbuildinfo
+
+# Testing
+coverage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+.idea
+
+# Temporary files
+*.log
+*.swp
+*.swo
+*~
+
+# Generated files
+vitest.config.d.ts
+vitest.config.d.ts.map
+vitest.config.js
+vitest.config.js.map

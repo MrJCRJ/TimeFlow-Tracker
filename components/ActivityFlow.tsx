@@ -1,0 +1,174 @@
+"use client";
+
+import { useState, FormEvent } from "react";
+
+export default function ActivityFlow() {
+  const [title, setTitle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chatResponse, setChatResponse] = useState<string | null>(null);
+  const [showChatBubble, setShowChatBubble] = useState(false);
+  const [fallbackWarning, setFallbackWarning] = useState<string | null>(null);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!title.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setChatResponse(null);
+    setShowChatBubble(false);
+    setFallbackWarning(null);
+
+    try {
+      const input = title.trim();
+
+      // Detecta intenção usando IA
+      const intentResponse = await fetch("/api/detect-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: input }),
+      });
+
+      const intent = await intentResponse.json();
+      console.log("🤖 IA detectou intenção:", intent);
+
+      // Se IA estiver offline, adiciona à fila e informa usuário
+      if (intent.usingFallback) {
+        // Adiciona à fila de pendências
+        await fetch("/api/pending-queue", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: input }),
+        });
+
+        setFallbackWarning(
+          intent.fallbackMessage ||
+            "🔌 IA offline - Input salvo para análise posterior"
+        );
+        setTitle(""); // Limpa o input
+        setTimeout(() => setFallbackWarning(null), 8000);
+        setIsSubmitting(false);
+        return; // Para aqui, não processa mais nada
+      }
+
+      // Mostra aviso se estiver usando fallback
+      if (intent.fallbackMessage) {
+        setFallbackWarning(intent.fallbackMessage);
+        setTimeout(() => setFallbackWarning(null), 5000);
+      }
+
+      // Se for conversa/pergunta/feedback → modo chat
+      if (
+        intent.type === "chat" ||
+        intent.type === "question" ||
+        intent.type === "feedback"
+      ) {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: input }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setChatResponse(data.message);
+          setShowChatBubble(true);
+          setTitle("");
+
+          // Auto-hide após 8 segundos
+          setTimeout(() => setShowChatBubble(false), 8000);
+        }
+      }
+      // Se for atividade → registra normalmente
+      else {
+        const response = await fetch("/api/flow", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title: input }),
+        });
+
+        if (response.ok) {
+          setTitle("");
+          window.dispatchEvent(new Event("activityUpdated"));
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao processar:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="w-full relative">
+      {/* Aviso de fallback */}
+      {fallbackWarning && (
+        <div className="mb-3 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+          <span>{fallbackWarning}</span>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="w-full flex gap-3">
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Digite sua atividade ou converse comigo..."
+          disabled={isSubmitting}
+          className="flex-1 px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          autoFocus
+        />
+        <button
+          type="submit"
+          disabled={isSubmitting || !title.trim()}
+          className="px-8 py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-lg font-bold rounded-lg shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] border-2 border-blue-800"
+        >
+          {isSubmitting ? "⏳ Enviando..." : "📤 Enviar"}
+        </button>
+      </form>
+
+      {/* Modal de processamento */}
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm mx-4 text-center">
+            <div className="mb-4">
+              <div className="w-16 h-16 mx-auto border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              🤖 IA Analisando...
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Processando sua entrada e gerando insights personalizados
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Bubble de resposta do chat */}
+      {showChatBubble && chatResponse && (
+        <div className="absolute top-full left-0 right-0 mt-3 animate-bounce-in z-50">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl shadow-2xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">💬</div>
+              <div className="flex-1 text-sm">{chatResponse}</div>
+              <button
+                onClick={() => setShowChatBubble(false)}
+                className="text-white/80 hover:text-white text-xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
