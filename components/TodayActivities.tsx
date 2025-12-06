@@ -66,7 +66,9 @@ export default function TodayActivities() {
               <div className="text-xs opacity-90 mb-1">
                 {lastAIResponse.category}
               </div>
-              <div className="font-medium text-sm sm:text-base break-words">{lastAIResponse.response}</div>
+              <div className="font-medium text-sm sm:text-base break-words">
+                {lastAIResponse.response}
+              </div>
             </div>
           </div>
         </div>
@@ -96,7 +98,9 @@ export default function TodayActivities() {
 
       {activities.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-700">HOJE</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
+            HOJE
+          </h2>
           <div className="space-y-2">
             {activities.map((activity) => (
               <div

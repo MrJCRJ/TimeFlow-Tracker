@@ -44,7 +44,9 @@ export default function DayFeedback() {
 
   return (
     <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-      <h3 className="text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">📊 SEU DIA HOJE</h3>
+      <h3 className="text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">
+        📊 SEU DIA HOJE
+      </h3>
 
       <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
         <div className="bg-white rounded-lg p-2 sm:p-3">
@@ -75,7 +77,12 @@ export default function DayFeedback() {
 
             return (
               <div key={category} className="flex items-center gap-2">
-                <div className="text-xs sm:text-sm flex-shrink-0 w-20 sm:w-32 truncate" title={category}>{category}</div>
+                <div
+                  className="text-xs sm:text-sm flex-shrink-0 w-20 sm:w-32 truncate"
+                  title={category}
+                >
+                  {category}
+                </div>
                 <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden min-w-0">
                   <div
                     className="bg-gradient-to-r from-blue-400 to-purple-500 h-full transition-all"

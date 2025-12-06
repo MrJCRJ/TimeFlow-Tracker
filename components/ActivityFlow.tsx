@@ -142,7 +142,10 @@ export default function ActivityFlow() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="w-full flex flex-col sm:flex-row gap-2 sm:gap-3">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full flex flex-col sm:flex-row gap-2 sm:gap-3"
+      >
         <input
           type="text"
           value={title}

@@ -171,7 +171,9 @@ export default function DataManager() {
             >
               <span className="text-xl sm:text-2xl">💾</span>
               <div>
-                <div className="font-medium text-gray-900 text-sm sm:text-base">Exportar</div>
+                <div className="font-medium text-gray-900 text-sm sm:text-base">
+                  Exportar
+                </div>
                 <div className="text-xs text-gray-500">Backup dos dados</div>
               </div>
             </button>
@@ -183,7 +185,9 @@ export default function DataManager() {
             >
               <span className="text-xl sm:text-2xl">📥</span>
               <div>
-                <div className="font-medium text-gray-900 text-sm sm:text-base">Importar</div>
+                <div className="font-medium text-gray-900 text-sm sm:text-base">
+                  Importar
+                </div>
                 <div className="text-xs text-gray-500">Restaurar backup</div>
               </div>
             </button>
@@ -195,7 +199,9 @@ export default function DataManager() {
             >
               <span className="text-xl sm:text-2xl">🔍</span>
               <div>
-                <div className="font-medium text-blue-600 text-sm sm:text-base">Debug</div>
+                <div className="font-medium text-blue-600 text-sm sm:text-base">
+                  Debug
+                </div>
                 <div className="text-xs text-blue-400">Ver dados</div>
               </div>
             </button>
@@ -209,7 +215,9 @@ export default function DataManager() {
             >
               <span className="text-xl sm:text-2xl">🗑️</span>
               <div>
-                <div className="font-medium text-red-600 text-sm sm:text-base">Apagar Tudo</div>
+                <div className="font-medium text-red-600 text-sm sm:text-base">
+                  Apagar Tudo
+                </div>
                 <div className="text-xs text-red-400">Limpar dados</div>
               </div>
             </button>
