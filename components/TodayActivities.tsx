@@ -1,65 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-interface Activity {
-  id: number;
-  title: string;
-  summary: string | null;
-  category: string | null;
-  aiResponse: string | null;
-  startedAt: string;
-  endedAt: string | null;
-  durationMinutes: number | null;
-}
+import { useTodayActivities } from "@/lib/hooks/useDatabase";
 
 export default function TodayActivities() {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
+  const allActivities = useTodayActivities();
   const [currentDuration, setCurrentDuration] = useState(0);
   const [lastAIResponse, setLastAIResponse] = useState<{
     response: string;
     category: string;
   } | null>(null);
 
-  const fetchActivities = async () => {
-    try {
-      const response = await fetch("/api/today");
-      const data = await response.json();
-
-      const ongoing = data.find((a: Activity) => a.endedAt === null);
-      const finished = data.filter((a: Activity) => a.endedAt !== null);
-
-      setCurrentActivity(ongoing || null);
-      setActivities(finished);
-
-      // Mostra resposta da IA da última atividade
-      if (ongoing && ongoing.aiResponse) {
-        setLastAIResponse({
-          response: ongoing.aiResponse,
-          category: ongoing.category || "",
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao buscar atividades:", error);
-    }
-  };
+  // Separa atividades em andamento e finalizadas
+  const currentActivity = allActivities?.find((a) => !a.endedAt) || null;
+  const activities = allActivities?.filter((a) => a.endedAt) || [];
 
   useEffect(() => {
-    fetchActivities();
-
-    const handleUpdate = () => fetchActivities();
-    window.addEventListener("activityUpdated", handleUpdate);
-
-    return () => window.removeEventListener("activityUpdated", handleUpdate);
-  }, []);
+    // Atualiza resposta da IA
+    if (currentActivity && currentActivity.aiResponse) {
+      setLastAIResponse({
+        response: currentActivity.aiResponse,
+        category: currentActivity.category || "",
+      });
+    }
+  }, [currentActivity]);
 
   // Atualiza duração da atividade atual a cada segundo
   useEffect(() => {
     if (!currentActivity) return;
 
     const interval = setInterval(() => {
-      const start = new Date(currentActivity.startedAt).getTime();
+      const start = currentActivity.startedAt.getTime();
       const now = Date.now();
       const minutes = Math.floor((now - start) / 60000);
       setCurrentDuration(minutes);
@@ -68,8 +39,8 @@ export default function TodayActivities() {
     return () => clearInterval(interval);
   }, [currentActivity]);
 
-  const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString("pt-BR", {
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -141,7 +112,6 @@ export default function TodayActivities() {
                     )}
                     <div className="font-medium text-gray-900">
                       {activity.summary || activity.title}
-                      {activity.title}
                     </div>
                     <div className="text-sm text-gray-500 mt-1">
                       {formatTime(activity.startedAt)} -{" "}

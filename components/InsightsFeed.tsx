@@ -1,52 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-interface Feedback {
-  id: number;
-  date: string;
-  type: string; // daily | weekly | monthly
-  theme: string | null;
-  score: number | null;
-  insights: string[];
-  suggestion: string | null;
-}
+import { useFeedbacks } from "@/lib/hooks/useDatabase";
+import { useState } from "react";
 
 export default function InsightsFeed() {
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const feedbacks = useFeedbacks();
   const [filter, setFilter] = useState<"all" | "daily" | "weekly" | "monthly">(
     "all"
   );
 
-  useEffect(() => {
-    const fetchFeedbacks = async () => {
-      try {
-        const response = await fetch("/api/insights");
-        const data = await response.json();
-
-        // Parse insights se for string
-        const parsed = data.map((f: any) => ({
-          ...f,
-          insights:
-            typeof f.insights === "string"
-              ? JSON.parse(f.insights)
-              : f.insights || [],
-        }));
-
-        setFeedbacks(parsed);
-      } catch (error) {
-        console.error("Erro ao buscar insights:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFeedbacks();
-  }, []);
-
   const filteredFeedbacks =
-    filter === "all" ? feedbacks : feedbacks.filter((f) => f.type === filter);
+    filter === "all"
+      ? feedbacks
+      : feedbacks?.filter((f) => f.type === filter) || [];
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -98,7 +64,7 @@ export default function InsightsFeed() {
     return "bg-blue-100 text-blue-700";
   };
 
-  if (isLoading) {
+  if (!feedbacks) {
     return (
       <div className="text-center text-gray-400 py-8">
         Carregando insights...
@@ -185,10 +151,10 @@ export default function InsightsFeed() {
                   {getTypeLabel(feedback.type || "daily")}
                 </span>
               </div>
-              {feedback.score !== null && (
+              {feedback.score !== undefined && feedback.score !== null && (
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-bold ${getScoreColor(
-                    feedback.score
+                    feedback.score ?? 0
                   )}`}
                 >
                   {feedback.score}/10

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useTodayActivities } from "@/lib/hooks/useDatabase";
+import { useMemo } from "react";
 
 interface DayStats {
   totalActivities: number;
@@ -10,32 +11,30 @@ interface DayStats {
 }
 
 export default function DayFeedback() {
-  const [stats, setStats] = useState<DayStats | null>(null);
+  const activities = useTodayActivities();
 
-  const fetchStats = async () => {
-    try {
-      const response = await fetch("/api/day-stats");
-      const data = await response.json();
-      setStats(data);
-    } catch (error) {
-      console.error("Erro ao buscar stats:", error);
-    }
-  };
+  const stats = useMemo<DayStats | null>(() => {
+    if (!activities || activities.length === 0) return null;
 
-  useEffect(() => {
-    fetchStats();
+    const finishedActivities = activities.filter(a => a.endedAt);
+    const totalMinutes = finishedActivities.reduce(
+      (sum, a) => sum + (a.durationMinutes || 0),
+      0
+    );
 
-    const handleUpdate = () => fetchStats();
-    window.addEventListener("activityUpdated", handleUpdate);
+    const byCategory: Record<string, number> = {};
+    finishedActivities.forEach(a => {
+      const category = a.category || "Sem categoria";
+      byCategory[category] = (byCategory[category] || 0) + (a.durationMinutes || 0);
+    });
 
-    // Atualiza a cada minuto
-    const interval = setInterval(fetchStats, 60000);
-
-    return () => {
-      window.removeEventListener("activityUpdated", handleUpdate);
-      clearInterval(interval);
+    return {
+      totalActivities: finishedActivities.length,
+      totalMinutes,
+      byCategory,
+      currentStreak: finishedActivities.length,
     };
-  }, []);
+  }, [activities]);
 
   if (!stats || stats.totalActivities === 0) return null;
 
