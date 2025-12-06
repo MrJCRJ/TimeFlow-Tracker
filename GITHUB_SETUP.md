@@ -31,6 +31,7 @@ git push -u origin main
 ## Passo 3: Verificar
 
 Após executar os comandos acima, acesse:
+
 ```
 https://github.com/SEU_USUARIO/timeflow-tracker
 ```
@@ -42,6 +43,7 @@ Você verá todo o código no GitHub! 🎉
 ### Adicionar tópicos no GitHub
 
 No repositório, clique em ⚙️ (Settings ao lado de About) e adicione tópicos:
+
 - `nextjs`
 - `typescript`
 - `sqlite`
@@ -54,6 +56,7 @@ No repositório, clique em ⚙️ (Settings ao lado de About) e adicione tópico
 ### Configurar GitHub Pages (para documentação)
 
 Se quiser hospedar a documentação:
+
 1. Vá em Settings → Pages
 2. Source: Deploy from a branch
 3. Branch: main → /docs (se criar uma pasta docs)
@@ -61,6 +64,7 @@ Se quiser hospedar a documentação:
 ### Adicionar badges ao README
 
 O README já inclui badges, mas você pode adicionar mais em:
+
 - [shields.io](https://shields.io)
 
 ## 🔄 Atualizações futuras
@@ -81,6 +85,7 @@ git push
 ## ⚠️ Importante
 
 **Nunca commite:**
+
 - ❌ Arquivo `.env` (com API keys)
 - ❌ Arquivos `local.db*` (banco de dados local)
 - ❌ Pasta `node_modules`

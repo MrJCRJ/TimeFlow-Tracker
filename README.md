@@ -51,7 +51,7 @@ Simplesmente digite o que está fazendo:
 
 ```
 "Estudando React"       → Enter
-"Fazendo café"          → Enter  
+"Fazendo café"          → Enter
 "Respondendo e-mails"   → Enter
 ```
 
@@ -60,6 +60,7 @@ Simplesmente digite o que está fazendo:
 ### 2️⃣ IA detecta sua intenção
 
 A IA analisa o que você digitou e classifica como:
+
 - **📋 Atividade**: Registra e cronometra
 - **💬 Chat**: Conversa natural com a IA
 - **❓ Pergunta**: Responde dúvidas específicas
@@ -69,15 +70,16 @@ A IA analisa o que você digitou e classifica como:
 
 O sistema gera análises automaticamente:
 
-| Tipo | Quando | O que analisa |
-|------|--------|---------------|
-| 📊 **Diária** | 23:59 todos os dias | Padrões do dia |
-| 📅 **Semanal** | Domingos às 23:59 | Tendências da semana |
-| 📆 **Mensal** | Último dia às 23:59 | Evolução mensal |
+| Tipo           | Quando              | O que analisa        |
+| -------------- | ------------------- | -------------------- |
+| 📊 **Diária**  | 23:59 todos os dias | Padrões do dia       |
+| 📅 **Semanal** | Domingos às 23:59   | Tendências da semana |
+| 📆 **Mensal**  | Último dia às 23:59 | Evolução mensal      |
 
 ### 4️⃣ IA aprende com você
 
 A cada análise, a IA:
+
 - 🧠 Aprende seus padrões de trabalho
 - 📈 Reconhece sua evolução
 - 🎯 Ajusta sugestões ao SEU perfil
@@ -151,6 +153,7 @@ O TimeFlow permite fazer backup completo dos seus dados:
 2. **Importar**: Clique no botão de dados → Importar → Selecione o arquivo JSON
 
 O backup inclui:
+
 - ✅ Todas as atividades
 - ✅ Todos os insights (diários, semanais, mensais)
 - ✅ Inputs pendentes (offline queue)
@@ -166,20 +169,22 @@ O backup inclui:
 ## 📊 Schema do Banco
 
 ### `activities_local` (Temporário - deletado diariamente)
+
 ```typescript
 {
-  id: number
-  title: string           // Texto original
-  summary: string         // Resumo pela IA
-  category: string        // Categoria (ex: 🏠 Casa)
-  aiResponse: string      // Resposta motivacional
-  startedAt: timestamp
-  endedAt: timestamp
-  durationMinutes: number
+  id: number;
+  title: string; // Texto original
+  summary: string; // Resumo pela IA
+  category: string; // Categoria (ex: 🏠 Casa)
+  aiResponse: string; // Resposta motivacional
+  startedAt: timestamp;
+  endedAt: timestamp;
+  durationMinutes: number;
 }
 ```
 
 ### `feedbacks_local` (Permanente)
+
 ```typescript
 {
   id: number
@@ -194,14 +199,15 @@ O backup inclui:
 ```
 
 ### `pending_inputs` (Fila offline)
+
 ```typescript
 {
-  id: number
-  text: string            // Input do usuário
-  timestamp: timestamp    // Quando digitou
-  processed: boolean      // Já processado?
-  processedAt: timestamp
-  result: string          // JSON com resultado
+  id: number;
+  text: string; // Input do usuário
+  timestamp: timestamp; // Quando digitou
+  processed: boolean; // Já processado?
+  processedAt: timestamp;
+  result: string; // JSON com resultado
 }
 ```
 

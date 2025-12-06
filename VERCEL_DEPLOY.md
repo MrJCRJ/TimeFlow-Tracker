@@ -19,11 +19,11 @@ Clique em `timeflow-tracker`
 1. Vá em **Settings** → **Environment Variables**
 2. Adicione as seguintes variáveis:
 
-| Name | Value | Environment |
-|------|-------|-------------|
-| `DEEPSEEK_API_KEY` | `sk-sua-key-aqui` | Production, Preview, Development |
-| `DEEPSEEK_URL` | `https://api.deepseek.com` | Production, Preview, Development |
-| `DEEPSEEK_MODEL` | `deepseek-chat` | Production, Preview, Development |
+| Name               | Value                      | Environment                      |
+| ------------------ | -------------------------- | -------------------------------- |
+| `DEEPSEEK_API_KEY` | `sk-sua-key-aqui`          | Production, Preview, Development |
+| `DEEPSEEK_URL`     | `https://api.deepseek.com` | Production, Preview, Development |
+| `DEEPSEEK_MODEL`   | `deepseek-chat`            | Production, Preview, Development |
 
 3. Clique em **Save**
 
@@ -48,6 +48,7 @@ Após adicionar as variáveis:
 Se alguém clonar o repositório:
 
 1. Copie o `.env.example`:
+
    ```bash
    cp .env.example .env
    ```
@@ -69,7 +70,8 @@ Se alguém clonar o repositório:
 
 **Causa comum**: Diferenças nas variáveis de ambiente
 
-**Solução**: 
+**Solução**:
+
 1. Verifique se todas as variáveis estão configuradas na Vercel
 2. Certifique-se que os nomes das variáveis estão EXATAMENTE iguais
 
@@ -77,7 +79,8 @@ Se alguém clonar o repositório:
 
 **Causa**: API Key inválida ou expirada
 
-**Solução**: 
+**Solução**:
+
 1. Gere uma nova key em https://platform.deepseek.com
 2. Atualize no dashboard da Vercel
 3. Redeploy
@@ -95,9 +98,11 @@ Antes de fazer deploy:
 ## 🌐 Após Deploy Bem-Sucedido
 
 Sua aplicação estará disponível em:
+
 ```
 https://timeflow-tracker.vercel.app
 ```
+
 (ou o domínio que a Vercel gerar)
 
 Atualize o README com o link:

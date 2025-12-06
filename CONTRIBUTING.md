@@ -115,7 +115,7 @@ export default function MyComponent() {
 }
 
 // ✅ Componente Client (quando necessário)
-"use client";
+("use client");
 export default function InteractiveComponent() {
   const [state, setState] = useState();
   return <div>...</div>;
@@ -147,23 +147,17 @@ export default function InteractiveComponent() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    
+
     if (!data.title) {
-      return NextResponse.json(
-        { error: "Title is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
-    
+
     // ... lógica
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error:", error);
-    return NextResponse.json(
-      { error: "Internal error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
 ```
@@ -207,21 +201,26 @@ git commit -m "Docs: Atualizar README com novas features"
 
 ```markdown
 ## Descrição
+
 [Descreva as mudanças feitas]
 
 ## Tipo de Mudança
+
 - [ ] Bug fix
 - [ ] Nova feature
 - [ ] Breaking change
 - [ ] Documentação
 
 ## Como Testar
+
 [Passos para testar as mudanças]
 
 ## Screenshots (se aplicável)
+
 [Adicione screenshots se houver mudanças visuais]
 
 ## Checklist
+
 - [ ] Código testado localmente
 - [ ] TypeScript sem erros
 - [ ] Documentação atualizada
