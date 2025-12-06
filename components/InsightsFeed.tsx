@@ -66,7 +66,7 @@ export default function InsightsFeed() {
 
   if (!feedbacks) {
     return (
-      <div className="text-center text-gray-400 py-8">
+      <div className="text-center text-gray-400 py-6 sm:py-8 text-sm sm:text-base">
         Carregando insights...
       </div>
     );
@@ -74,24 +74,24 @@ export default function InsightsFeed() {
 
   if (feedbacks.length === 0) {
     return (
-      <div className="text-center text-gray-400 py-8">
+      <div className="text-center text-gray-400 py-6 sm:py-8 text-sm sm:text-base">
         Nenhum feedback ainda. Continue registrando atividades!
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-700">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-700">
           INSIGHTS ANTERIORES
         </h2>
 
         {/* Filtros */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1">
           <button
             onClick={() => setFilter("all")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
               filter === "all"
                 ? "bg-gray-800 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -101,7 +101,7 @@ export default function InsightsFeed() {
           </button>
           <button
             onClick={() => setFilter("daily")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
               filter === "daily"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -111,7 +111,7 @@ export default function InsightsFeed() {
           </button>
           <button
             onClick={() => setFilter("weekly")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
               filter === "weekly"
                 ? "bg-purple-500 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -121,7 +121,7 @@ export default function InsightsFeed() {
           </button>
           <button
             onClick={() => setFilter("monthly")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
               filter === "monthly"
                 ? "bg-orange-500 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -136,11 +136,11 @@ export default function InsightsFeed() {
         {filteredFeedbacks.map((feedback) => (
           <div
             key={feedback.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
           >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <div className="font-semibold text-gray-700">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="font-semibold text-gray-700 text-sm sm:text-base">
                   {formatDate(feedback.date)}
                 </div>
                 <span

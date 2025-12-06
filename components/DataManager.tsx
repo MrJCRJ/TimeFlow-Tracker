@@ -152,7 +152,7 @@ export default function DataManager() {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 z-50">
       {/* Menu */}
       {showMenu && (
         <>
@@ -163,15 +163,15 @@ export default function DataManager() {
           />
 
           {/* Menu de opções */}
-          <div className="absolute bottom-16 left-0 bg-white rounded-lg shadow-2xl border border-gray-200 p-2 min-w-[200px]">
+          <div className="absolute bottom-14 sm:bottom-16 left-0 bg-white rounded-lg shadow-2xl border border-gray-200 p-2 min-w-[180px] sm:min-w-[200px]">
             <button
               onClick={handleExport}
               disabled={isProcessing}
-              className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
             >
-              <span className="text-2xl">💾</span>
+              <span className="text-xl sm:text-2xl">💾</span>
               <div>
-                <div className="font-medium text-gray-900">Exportar</div>
+                <div className="font-medium text-gray-900 text-sm sm:text-base">Exportar</div>
                 <div className="text-xs text-gray-500">Backup dos dados</div>
               </div>
             </button>
@@ -179,11 +179,11 @@ export default function DataManager() {
             <button
               onClick={handleImport}
               disabled={isProcessing}
-              className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
             >
-              <span className="text-2xl">📥</span>
+              <span className="text-xl sm:text-2xl">📥</span>
               <div>
-                <div className="font-medium text-gray-900">Importar</div>
+                <div className="font-medium text-gray-900 text-sm sm:text-base">Importar</div>
                 <div className="text-xs text-gray-500">Restaurar backup</div>
               </div>
             </button>
@@ -191,11 +191,11 @@ export default function DataManager() {
             <button
               onClick={handleDebug}
               disabled={isProcessing}
-              className="w-full text-left px-4 py-3 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
             >
-              <span className="text-2xl">🔍</span>
+              <span className="text-xl sm:text-2xl">🔍</span>
               <div>
-                <div className="font-medium text-blue-600">Debug</div>
+                <div className="font-medium text-blue-600 text-sm sm:text-base">Debug</div>
                 <div className="text-xs text-blue-400">Ver dados</div>
               </div>
             </button>
@@ -205,11 +205,11 @@ export default function DataManager() {
             <button
               onClick={handleClearData}
               disabled={isProcessing}
-              className="w-full text-left px-4 py-3 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
             >
-              <span className="text-2xl">🗑️</span>
+              <span className="text-xl sm:text-2xl">🗑️</span>
               <div>
-                <div className="font-medium text-red-600">Apagar Tudo</div>
+                <div className="font-medium text-red-600 text-sm sm:text-base">Apagar Tudo</div>
                 <div className="text-xs text-red-400">Limpar dados</div>
               </div>
             </button>
@@ -221,14 +221,14 @@ export default function DataManager() {
       <button
         onClick={() => setShowMenu(!showMenu)}
         disabled={isProcessing}
-        className="bg-gray-800 hover:bg-gray-900 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+        className="bg-gray-800 hover:bg-gray-900 text-white rounded-full p-3 sm:p-4 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 active:scale-95"
         title="Gerenciar Dados"
       >
         {isProcessing ? (
-          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
         ) : (
           <svg
-            className="w-6 h-6"
+            className="w-5 h-5 sm:w-6 sm:h-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

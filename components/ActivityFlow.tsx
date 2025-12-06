@@ -142,20 +142,20 @@ export default function ActivityFlow() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="w-full flex gap-3">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col sm:flex-row gap-2 sm:gap-3">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Digite sua atividade ou converse comigo..."
+          placeholder="Digite sua atividade..."
           disabled={isSubmitting}
-          className="flex-1 px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="flex-1 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           autoFocus
         />
         <button
           type="submit"
           disabled={isSubmitting || !title.trim()}
-          className="px-8 py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-lg font-bold rounded-lg shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] border-2 border-blue-800"
+          className="px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-base sm:text-lg font-bold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:min-w-[140px] border-2 border-blue-800"
         >
           {isSubmitting ? "⏳ Enviando..." : "📤 Enviar"}
         </button>
@@ -163,15 +163,15 @@ export default function ActivityFlow() {
 
       {/* Modal de processamento */}
       {isSubmitting && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm mx-4 text-center">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full text-center">
             <div className="mb-4">
-              <div className="w-16 h-16 mx-auto border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
               🤖 IA Analisando...
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-xs sm:text-sm">
               Processando sua entrada e gerando insights personalizados
             </p>
           </div>
@@ -180,11 +180,11 @@ export default function ActivityFlow() {
 
       {/* Bubble de resposta do chat */}
       {showChatBubble && chatResponse && (
-        <div className="absolute top-full left-0 right-0 mt-3 animate-bounce-in z-50">
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl shadow-2xl p-4">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">💬</div>
-              <div className="flex-1 text-sm">{chatResponse}</div>
+        <div className="absolute top-full left-0 right-0 mt-3 animate-bounce-in z-50 mx-3 sm:mx-0">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl shadow-2xl p-3 sm:p-4">
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="text-xl sm:text-2xl">💬</div>
+              <div className="flex-1 text-xs sm:text-sm">{chatResponse}</div>
               <button
                 onClick={() => setShowChatBubble(false)}
                 className="text-white/80 hover:text-white text-xl leading-none"
