@@ -98,9 +98,7 @@ export default function TodayActivities() {
 
       {activities.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-gray-700">
-            HOJE
-          </h2>
+          <h2 className="text-sm font-semibold text-gray-700">HOJE</h2>
           <div className="space-y-2">
             {activities.map((activity) => (
               <div

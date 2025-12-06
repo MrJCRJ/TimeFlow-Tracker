@@ -117,12 +117,14 @@ export default function ActivityFlow() {
         console.log("✅ IA respondeu:", aiResult);
 
         // Salva no IndexedDB
-        await startNewActivity(
+        console.log("💾 Salvando no IndexedDB...");
+        const result = await startNewActivity(
           input,
           aiResult.summary,
           aiResult.category,
           aiResult.response
         );
+        console.log("✅ Atividade salva:", result);
 
         setTitle("");
       }
@@ -142,10 +144,7 @@ export default function ActivityFlow() {
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="w-full flex gap-2"
-      >
+      <form onSubmit={handleSubmit} className="w-full flex gap-2">
         <input
           type="text"
           value={title}

@@ -102,19 +102,27 @@ export async function getOngoingActivity() {
 }
 
 export async function endOngoingActivity() {
+  console.log("🔍 Buscando atividade em andamento...");
   const ongoing = await getOngoingActivity();
-  if (!ongoing || !ongoing.id) return null;
+  console.log("📋 Atividade encontrada:", ongoing);
+  
+  if (!ongoing || !ongoing.id) {
+    console.log("⚠️ Nenhuma atividade em andamento para encerrar");
+    return null;
+  }
 
   const endedAt = new Date();
   const durationMinutes = Math.round(
     (endedAt.getTime() - ongoing.startedAt.getTime()) / 60000
   );
 
+  console.log("⏱️ Atualizando atividade com duração:", durationMinutes, "minutos");
   await db.activities.update(ongoing.id, {
     endedAt,
     durationMinutes,
   });
 
+  console.log("✅ Atividade encerrada com sucesso");
   return {
     ...ongoing,
     endedAt,
@@ -128,10 +136,15 @@ export async function startNewActivity(
   category?: string,
   aiResponse?: string
 ) {
+  console.log("🔄 startNewActivity chamado:", { title, summary, category, aiResponse });
+  
   // Encerra atividade em andamento
+  console.log("🔚 Encerrando atividade anterior...");
   const previousActivity = await endOngoingActivity();
+  console.log("✅ Atividade anterior encerrada:", previousActivity);
 
   // Cria nova atividade
+  console.log("➕ Criando nova atividade...");
   const id = await db.activities.add({
     title,
     summary,
@@ -139,6 +152,7 @@ export async function startNewActivity(
     aiResponse,
     startedAt: new Date(),
   });
+  console.log("✅ Nova atividade criada com ID:", id);
 
   return {
     id,
