@@ -176,23 +176,26 @@ O TimeFlow Tracker **agora funciona perfeitamente** na Vercel e outras plataform
 Se você está usando o app no celular e vê conteúdo antigo (bundle antigo ou comportamento estranho), siga as instruções abaixo conforme o seu navegador:
 
 - Chrome (Android):
-   1. Abra o site no Chrome.
-   2. Toque no menu (três pontos) → "Informações do site" ou "Configurações do site".
-   3. Toque em "Armazenamento" ou "Limpar e redefinir" e confirme.
-   4. Feche o Chrome (force stop se necessário) e reabra o site.
+
+  1.  Abra o site no Chrome.
+  2.  Toque no menu (três pontos) → "Informações do site" ou "Configurações do site".
+  3.  Toque em "Armazenamento" ou "Limpar e redefinir" e confirme.
+  4.  Feche o Chrome (force stop se necessário) e reabra o site.
 
 - Chrome (iOS):
-   1. Abra o app "Ajustes" → Chrome → "Dados do site" → "Limpar dados".
-   2. Ou abra o Chrome → menu → Histórico → Limpar dados de navegação → marque "Imagens e arquivos em cache" → Limpar dados.
+
+  1.  Abra o app "Ajustes" → Chrome → "Dados do site" → "Limpar dados".
+  2.  Ou abra o Chrome → menu → Histórico → Limpar dados de navegação → marque "Imagens e arquivos em cache" → Limpar dados.
 
 - Safari (iOS):
-   1. Abra o app "Ajustes" → Safari → Avançado → Dados dos sites.
-   2. Localize o domínio do app (ex: timeflow-tracker...) e remova os dados do site.
-   3. Em alternativa, em "Safari" → "Limpar Histórico e Dados do Site" (limpa para todos os sites).
+
+  1.  Abra o app "Ajustes" → Safari → Avançado → Dados dos sites.
+  2.  Localize o domínio do app (ex: timeflow-tracker...) e remova os dados do site.
+  3.  Em alternativa, em "Safari" → "Limpar Histórico e Dados do Site" (limpa para todos os sites).
 
 - Firefox (Android):
-   1. Abra o site no Firefox.
-   2. Toque no menu → Configurações do site → Armazenamento → Limpar dados.
+  1.  Abra o site no Firefox.
+  2.  Toque no menu → Configurações do site → Armazenamento → Limpar dados.
 
 Se você instalou o PWA (Adicionar à tela inicial):
 
@@ -207,13 +210,12 @@ Implementamos opções para ajudar o usuário a atualizar e limpar caches:
 
 - Atualização automática: quando há uma nova versão do Service Worker, o app mostrará um aviso "Nova versão disponível" e um botão "Atualizar". Ao confirmar, o app aplica a nova versão imediatamente.
 - Limpar Cache: no menu "Gerenciar Dados" há uma opção "Limpar Cache" que:
-   - Remove todos os caches do Service Worker
-   - Desregistra o Service Worker
-   - Recarrega a página (garante que você terá a versão atual do app)
+  - Remove todos os caches do Service Worker
+  - Desregistra o Service Worker
+  - Recarrega a página (garante que você terá a versão atual do app)
 
 Se o seu navegador ainda estiver exibindo o bundle antigo após as ações acima, experimente:
 
 1. Recarregar completamente a página / PWA.
 2. Fechar todas as abas do navegador e abrir novamente.
 3. Desinstalar e reinstalar o PWA.
-

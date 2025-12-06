@@ -54,14 +54,24 @@ O usuário acabou de dizer: "${title}"
 Retorne APENAS um JSON válido (sem markdown):
 {
   "summary": "nome curto e claro (max 4 palavras)",
-  "category": "emoji + categoria (ex: 🏠 Casa, 💼 Trabalho, 🎮 Lazer, 🍳 Alimentação, 🧘 Saúde, 📚 Estudos)",
+  "category": "emoji + categoria (ex: 🏠 Casa, 💼 Trabalho, 🎮 Lazer, 🍳 Alimentação, 🚿 Higiene, 🧘 Saúde, 📚 Estudos)",
   "response": "resposta motivacional CURTA (1 frase, max 15 palavras, use emoji)"
 }
 
+REGRAS DE CATEGORIZAÇÃO:
+- Se mencionou FINALIZAR/CONCLUIR projeto/trabalho E algo pessoal depois (banho, descansar, etc), use a categoria da NOVA atividade pessoal
+- 💼 Trabalho: projetos, reuniões, tarefas profissionais, programação, desenvolvimento
+- 🏠 Casa: limpeza, organização, arrumar casa, tarefas domésticas
+- 🚿 Higiene: banho, escovar dentes, lavar rosto, barbear, cuidados pessoais
+- 🧘 Saúde: exercícios, descanso, meditação, dormir, alongamento, relaxar
+- 🍳 Alimentação: cozinhar, comer, preparar comida, almoço, jantar, lanche
+- 🎮 Lazer: jogos, séries, filmes, hobby, diversão, entretenimento
+- 📚 Estudos: cursos, leitura, aprendizado, faculdade, pesquisa
+
 IMPORTANTE:
-- Summary: simplifique mas mantenha essência
-- Category: escolha a mais adequada
-- Response: seja motivador, reconheça progresso, seja empático
+- Summary: foque na PRÓXIMA ação se houver transição (ex: "Banho" se disse "finalizei X agora vou tomar banho")
+- Category: escolha baseado na PRÓXIMA atividade, não na anterior mencionada
+- Response: reconheça a conquista E incentive a próxima ação
 ${contextInfo}${statsInfo}
 
 Seja natural e humano!`;
