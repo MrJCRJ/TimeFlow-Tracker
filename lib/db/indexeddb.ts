@@ -194,7 +194,7 @@ export async function exportAllData() {
 export async function importAllData(data: any) {
   // Limpa dados existentes
   await clearAllData();
-  
+
   console.log("📥 Importando dados:", data);
 
   // Importa atividades
@@ -249,6 +249,6 @@ export async function importAllData(data: any) {
     }
     console.log("✅ Pending inputs importados!");
   }
-  
+
   console.log("🎉 Importação concluída!");
 }

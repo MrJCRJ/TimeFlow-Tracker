@@ -133,17 +133,17 @@ export default function DataManager() {
     try {
       const data = await exportAllData();
       console.log("🔍 DEBUG - Dados no IndexedDB:", data);
-      
+
       const activitiesCount = data.data.activities?.length || 0;
       const feedbacksCount = data.data.feedbacks?.length || 0;
       const pendingCount = data.data.pendingInputs?.length || 0;
-      
+
       alert(
         `🔍 DEBUG IndexedDB:\n\n` +
-        `📊 Atividades: ${activitiesCount}\n` +
-        `💡 Feedbacks: ${feedbacksCount}\n` +
-        `⏳ Pendentes: ${pendingCount}\n\n` +
-        `Veja o console (F12) para mais detalhes`
+          `📊 Atividades: ${activitiesCount}\n` +
+          `💡 Feedbacks: ${feedbacksCount}\n` +
+          `⏳ Pendentes: ${pendingCount}\n\n` +
+          `Veja o console (F12) para mais detalhes`
       );
     } catch (error) {
       console.error("Erro ao debugar:", error);

@@ -13,11 +13,11 @@ export function useTodayActivities() {
   const activities = useLiveQuery(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     // Filtra manualmente pois comparação de Date com índices pode falhar
-    return db.activities.toArray().then(all => 
-      all.filter(a => a.startedAt >= today)
-    );
+    return db.activities
+      .toArray()
+      .then((all) => all.filter((a) => a.startedAt >= today));
   });
   return activities || [];
 }
