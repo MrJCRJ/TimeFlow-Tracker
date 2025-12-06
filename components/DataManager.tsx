@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { exportAllData, importAllData, clearAllData } from "@/lib/db/indexeddb";
 
 /**
- * Componente para importar/exportar dados
+ * Componente para importar/exportar dados do IndexedDB
  */
 export default function DataManager() {
   const [showMenu, setShowMenu] = useState(false);
@@ -13,20 +14,8 @@ export default function DataManager() {
     try {
       setIsProcessing(true);
 
-      // Busca TODOS os dados do banco
-      const response = await fetch("/api/export-all");
-      const allData = await response.json();
-
-      // Cria objeto com todos os dados
-      const exportData = {
-        version: "1.0.0",
-        exportDate: new Date().toISOString(),
-        data: {
-          activities: allData.activities || [],
-          feedbacks: allData.feedbacks || [],
-          pendingInputs: allData.pending || [],
-        },
-      };
+      // Exporta TODOS os dados do IndexedDB
+      const exportData = await exportAllData();
 
       // Cria arquivo para download
       const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -75,27 +64,18 @@ export default function DataManager() {
             );
           }
 
-          // Envia dados para API de importação (passa o objeto completo)
-          const response = await fetch("/api/import", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(importData),
-          });
+          // Importa dados diretamente no IndexedDB
+          await importAllData(importData.data);
 
-          const result = await response.json();
+          const activitiesCount = importData.data.activities?.length || 0;
+          const feedbacksCount = importData.data.feedbacks?.length || 0;
 
-          if (response.ok) {
-            const msg =
-              `✅ Importação concluída!\n\n` +
-              `📊 Atividades: ${result.imported.activities}\n` +
-              `💡 Insights: ${result.imported.feedbacks}`;
-            alert(msg);
-            window.location.reload();
-          } else {
-            throw new Error(result.error || "Erro ao importar dados");
-          }
+          const msg =
+            `✅ Importação concluída!\n\n` +
+            `📊 Atividades: ${activitiesCount}\n` +
+            `💡 Insights: ${feedbacksCount}`;
+          alert(msg);
+          window.location.reload();
         } catch (error) {
           console.error("Erro ao importar:", error);
           const message =
@@ -135,16 +115,11 @@ export default function DataManager() {
     try {
       setIsProcessing(true);
 
-      const response = await fetch("/api/clear-data", {
-        method: "DELETE",
-      });
+      // Limpa dados diretamente do IndexedDB
+      await clearAllData();
 
-      if (response.ok) {
-        alert("✅ Todos os dados foram apagados!");
-        window.location.reload();
-      } else {
-        throw new Error("Erro ao limpar dados");
-      }
+      alert("✅ Todos os dados foram apagados!");
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao limpar dados:", error);
       alert("❌ Erro ao limpar dados");

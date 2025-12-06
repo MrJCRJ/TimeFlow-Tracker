@@ -1,34 +1,35 @@
 # 🕐 TimeFlow Tracker
 
-> **Rastreador de atividades inteligente com IA** - 100% Local, Privado e Automático.
+> **Rastreador de atividades inteligente com IA** - 100% Browser, Privado e Automático.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![SQLite](https://img.shields.io/badge/SQLite-Local-green?logo=sqlite)](https://www.sqlite.org/)
+[![IndexedDB](https://img.shields.io/badge/IndexedDB-Browser-green)](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)
 [![DeepSeek](https://img.shields.io/badge/DeepSeek-AI-purple)](https://deepseek.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## 🚨 IMPORTANTE: Aplicação Local APENAS
+## ✅ ATUALIZAÇÃO: Agora funciona na Vercel!
 
-> **⚠️ Este projeto NÃO funciona na Vercel/Netlify!**
+> **🎉 Migrado para IndexedDB!**
 > 
-> Usa SQLite (arquivo local) que é incompatível com plataformas serverless.
+> Dados armazenados no navegador - funciona online E offline!
 > 
-> **Para usar: Clone e rode localmente.**
+> **Deploy na Vercel funcionando perfeitamente.**
 
 ---
 
-## ⚠️ Aplicação Desktop/Local
+## 💾 Armazenamento no Navegador
 
-**TimeFlow Tracker é uma aplicação que roda no SEU computador.**
+**TimeFlow Tracker usa IndexedDB** - banco de dados nativo do navegador.
 
-- 💾 **100% Local**: Todos os dados ficam no seu computador (SQLite)
-- 🔒 **Privacidade Total**: Nada é enviado para nuvem (exceto API da IA)
-- 🖥️ **Sem servidor**: Não requer deploy ou hospedagem
-- 📦 **Portátil**: Seu banco de dados é um único arquivo `.db`
-- ❌ **Não funciona na Vercel**: SQLite incompatível com serverless
+- 💾 **Dados no navegador**: Tudo armazenado localmente no seu navegador
+- 🔒 **Privacidade Total**: Nada enviado para servidor (exceto IA)
+- 🌐 **Funciona online**: Deploy na Vercel/Netlify OK
+- 📱 **PWA Completo**: Funciona offline após primeira visita
+- 📦 **Exportar/Importar**: Faça backup em JSON quando quiser
+- 🔄 **Multi-dispositivo**: Use em qualquer navegador (dados separados por navegador)
 
 ## ✨ O que torna o TimeFlow único?
 
