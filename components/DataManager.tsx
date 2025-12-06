@@ -152,7 +152,12 @@ export default function DataManager() {
   };
 
   const handleClearCache = async () => {
-    if (!confirm("⚠️ Limpar cache do app?\n\nIsto removerá caches estáticos e forçará o reload.")) return;
+    if (
+      !confirm(
+        "⚠️ Limpar cache do app?\n\nIsto removerá caches estáticos e forçará o reload."
+      )
+    )
+      return;
     try {
       setIsProcessing(true);
       // Remove todos os caches
@@ -239,7 +244,9 @@ export default function DataManager() {
                 <div className="font-medium text-yellow-700 text-sm sm:text-base">
                   Limpar Cache
                 </div>
-                <div className="text-xs text-yellow-500">Remove caches estáticos</div>
+                <div className="text-xs text-yellow-500">
+                  Remove caches estáticos
+                </div>
               </div>
             </button>
 
