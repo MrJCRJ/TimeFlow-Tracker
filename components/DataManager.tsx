@@ -118,14 +118,36 @@ export default function DataManager() {
       // Limpa dados diretamente do IndexedDB
       await clearAllData();
 
-      alert("✅ Todos os dados foram apagados!");
+      alert("✅ Todos os dados foram removidos!");
       window.location.reload();
     } catch (error) {
-      console.error("Erro ao limpar dados:", error);
+      console.error("Erro ao limpar:", error);
       alert("❌ Erro ao limpar dados");
     } finally {
       setIsProcessing(false);
       setShowMenu(false);
+    }
+  };
+
+  const handleDebug = async () => {
+    try {
+      const data = await exportAllData();
+      console.log("🔍 DEBUG - Dados no IndexedDB:", data);
+      
+      const activitiesCount = data.data.activities?.length || 0;
+      const feedbacksCount = data.data.feedbacks?.length || 0;
+      const pendingCount = data.data.pendingInputs?.length || 0;
+      
+      alert(
+        `🔍 DEBUG IndexedDB:\n\n` +
+        `📊 Atividades: ${activitiesCount}\n` +
+        `💡 Feedbacks: ${feedbacksCount}\n` +
+        `⏳ Pendentes: ${pendingCount}\n\n` +
+        `Veja o console (F12) para mais detalhes`
+      );
+    } catch (error) {
+      console.error("Erro ao debugar:", error);
+      alert("❌ Erro ao verificar dados");
     }
   };
 
@@ -163,6 +185,18 @@ export default function DataManager() {
               <div>
                 <div className="font-medium text-gray-900">Importar</div>
                 <div className="text-xs text-gray-500">Restaurar backup</div>
+              </div>
+            </button>
+
+            <button
+              onClick={handleDebug}
+              disabled={isProcessing}
+              className="w-full text-left px-4 py-3 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-3 disabled:opacity-50"
+            >
+              <span className="text-2xl">🔍</span>
+              <div>
+                <div className="font-medium text-blue-600">Debug</div>
+                <div className="text-xs text-blue-400">Ver dados</div>
               </div>
             </button>
 
