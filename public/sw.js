@@ -1,10 +1,25 @@
-const CACHE_NAME = 'timeflow-v1';
+const CACHE_NAME = 'timeflow-v2'; // Incrementado para forçar novo cache
 const urlsToCache = [
   '/',
   '/manifest.json',
 ];
 
+// URLs das APIs antigas removidas - retornar erro imediatamente
+const REMOVED_APIS = [
+  '/api/today',
+  '/api/insights',
+  '/api/day-stats',
+  '/api/pending-queue',
+  '/api/flow',
+  '/api/export-all',
+  '/api/import',
+  '/api/clear-data',
+];
+
 self.addEventListener('install', (event) => {
+  // Força ativação imediata do novo service worker
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(urlsToCache))
@@ -12,6 +27,25 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Se for uma API removida, retorna 404 imediatamente sem tentar fazer fetch
+  if (REMOVED_APIS.some(api => url.pathname === api)) {
+    event.respondWith(
+      new Response(
+        JSON.stringify({ 
+          error: 'API removida - use IndexedDB',
+          message: 'Esta API foi migrada para IndexedDB. Os dados agora são armazenados localmente no navegador.'
+        }),
+        { 
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    );
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then((response) => response || fetch(event.request))
@@ -19,15 +53,19 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Assume controle imediato de todas as páginas
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
+    clients.claim().then(() => {
+      return caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('🗑️ Removendo cache antigo:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      });
     })
   );
 });
