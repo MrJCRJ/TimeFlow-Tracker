@@ -98,9 +98,7 @@ export async function clearAllData() {
 
 // Funções específicas para fluxo de atividades
 export async function getOngoingActivity() {
-  return await db.activities
-    .filter(a => !a.endedAt)
-    .first();
+  return await db.activities.filter((a) => !a.endedAt).first();
 }
 
 export async function endOngoingActivity() {
@@ -160,9 +158,9 @@ export async function addPendingInput(text: string) {
 
 export async function getPendingInputs(processedOnly: boolean = false) {
   if (processedOnly) {
-    return await db.pendingInputs.filter(p => p.processed === true).toArray();
+    return await db.pendingInputs.filter((p) => p.processed === true).toArray();
   }
-  return await db.pendingInputs.filter(p => p.processed === false).toArray();
+  return await db.pendingInputs.filter((p) => p.processed === false).toArray();
 }
 
 export async function markPendingAsProcessed(id: number, result?: string) {

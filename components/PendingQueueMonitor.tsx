@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  getPendingInputs, 
+import {
+  getPendingInputs,
   markPendingAsProcessed,
   deletePendingInput,
-  startNewActivity 
+  startNewActivity,
 } from "@/lib/db/indexeddb";
 import { processActivityWithAI } from "@/lib/ai-service";
 
@@ -69,7 +69,7 @@ export default function PendingQueueMonitor() {
               totalMinutes: 0,
             },
           });
-          
+
           // Cria atividade
           await startNewActivity(
             item.text,
@@ -93,7 +93,9 @@ export default function PendingQueueMonitor() {
 
       if (processed > 0) {
         setSummary(
-          `Processados ${processed} ${processed === 1 ? "item" : "itens"}:\n\n${results.join("\n")}`
+          `Processados ${processed} ${
+            processed === 1 ? "item" : "itens"
+          }:\n\n${results.join("\n")}`
         );
         setShowSummary(true);
         setPendingCount(0);

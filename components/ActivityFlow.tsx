@@ -87,9 +87,10 @@ export default function ActivityFlow() {
       // Se for atividade → registra localmente com IA
       else {
         // Prepara contexto para IA
-        const finishedActivities = todayActivities?.filter(a => a.endedAt) || [];
-        const ongoingActivity = todayActivities?.find(a => !a.endedAt);
-        
+        const finishedActivities =
+          todayActivities?.filter((a) => a.endedAt) || [];
+        const ongoingActivity = todayActivities?.find((a) => !a.endedAt);
+
         const todayStats = {
           activitiesCount: finishedActivities.length,
           totalMinutes: finishedActivities.reduce(
@@ -98,12 +99,14 @@ export default function ActivityFlow() {
           ),
         };
 
-        const previousActivity = ongoingActivity ? {
-          title: ongoingActivity.title,
-          summary: ongoingActivity.summary,
-          category: ongoingActivity.category,
-          durationMinutes: ongoingActivity.durationMinutes || 0,
-        } : undefined;
+        const previousActivity = ongoingActivity
+          ? {
+              title: ongoingActivity.title,
+              summary: ongoingActivity.summary,
+              category: ongoingActivity.category,
+              durationMinutes: ongoingActivity.durationMinutes || 0,
+            }
+          : undefined;
 
         // Processa com IA
         console.log("🤖 Processando com IA:", input);

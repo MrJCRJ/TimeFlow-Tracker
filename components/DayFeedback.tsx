@@ -16,16 +16,17 @@ export default function DayFeedback() {
   const stats = useMemo<DayStats | null>(() => {
     if (!activities || activities.length === 0) return null;
 
-    const finishedActivities = activities.filter(a => a.endedAt);
+    const finishedActivities = activities.filter((a) => a.endedAt);
     const totalMinutes = finishedActivities.reduce(
       (sum, a) => sum + (a.durationMinutes || 0),
       0
     );
 
     const byCategory: Record<string, number> = {};
-    finishedActivities.forEach(a => {
+    finishedActivities.forEach((a) => {
       const category = a.category || "Sem categoria";
-      byCategory[category] = (byCategory[category] || 0) + (a.durationMinutes || 0);
+      byCategory[category] =
+        (byCategory[category] || 0) + (a.durationMinutes || 0);
     });
 
     return {
