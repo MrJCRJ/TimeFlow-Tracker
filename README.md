@@ -53,7 +53,8 @@ npm run dev
 
 Acesse: **http://localhost:3000**
 
-> ⚠️ **IMPORTANTE**: 
+> ⚠️ **IMPORTANTE**:
+>
 > - A API DeepSeek é obrigatória para análises inteligentes
 > - Mantenha o terminal rodando enquanto usa o app
 > - Seus dados ficam salvos em `local.db`

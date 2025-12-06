@@ -7,16 +7,19 @@ O **TimeFlow Tracker** foi projetado como uma **aplicação desktop/local** por 
 ### Por que Local?
 
 1. **🔒 Privacidade Total**
+
    - Todos os seus dados ficam no seu computador
    - Nenhuma atividade é enviada para servidores externos (exceto API da IA)
    - Você tem controle total sobre seus dados
 
 2. **💾 Simplicidade**
+
    - Um único arquivo `local.db` contém tudo
    - Fácil fazer backup (copie o arquivo)
    - Sem dependência de serviços externos
 
 3. **💰 Custo Zero**
+
    - Não precisa pagar por hospedagem
    - Não precisa pagar por banco de dados em nuvem
    - Apenas o custo da API da IA (muito baixo)
@@ -36,6 +39,7 @@ A Vercel (e outras plataformas serverless) tem limitações:
 - ❌ Não há armazenamento persistente de arquivos
 
 **Erro típico:**
+
 ```
 SqliteError: unable to open database file
 Code: SQLITE_CANTOPEN
@@ -63,18 +67,21 @@ npm start
 Você pode transformar em um app standalone usando:
 
 **Opção 1: Electron**
+
 ```bash
 npm install electron electron-builder
 # Configure Electron wrapper
 ```
 
 **Opção 2: Tauri**
+
 ```bash
 npm install @tauri-apps/cli
 # Configure Tauri (menor e mais rápido)
 ```
 
 **Opção 3: PWA**
+
 - Já está configurado!
 - Acesse no Chrome/Edge
 - Clique nos 3 pontinhos → "Instalar TimeFlow Tracker"
@@ -87,6 +94,7 @@ Se você **realmente** quiser hospedar online (não recomendado para privacidade
 ### 1. Migrar para PostgreSQL
 
 Substitua SQLite por Postgres e use:
+
 - **Neon** (Serverless Postgres - Grátis)
 - **Supabase** (Postgres + Auth - Grátis)
 - **Railway** (Hospedagem simples - Grátis com limites)
@@ -94,6 +102,7 @@ Substitua SQLite por Postgres e use:
 ### 2. Usar VPS
 
 Host a aplicação inteira em um servidor:
+
 - **DigitalOcean** ($4/mês)
 - **Linode** ($5/mês)
 - **Hetzner** (€4/mês)
@@ -110,6 +119,7 @@ docker run -p 3000:3000 -v ./data:/app/data timeflow
 > "Seus dados de produtividade são **pessoais**. Eles devem ficar no **seu computador**, sob **seu controle**."
 
 TimeFlow Tracker segue a filosofia de **local-first software**:
+
 - Dados locais por padrão
 - Funciona offline
 - Você é dono dos seus dados
@@ -138,6 +148,7 @@ TimeFlow Tracker segue a filosofia de **local-first software**:
 ## 🔴 Problema
 
 A Vercel usa um ambiente **serverless** onde:
+
 - ❌ Sistema de arquivos é **read-only**
 - ❌ SQLite não pode criar/modificar arquivos
 - ❌ `SQLITE_CANTOPEN` error em produção
@@ -147,6 +158,7 @@ A Vercel usa um ambiente **serverless** onde:
 ### Opção 1: Vercel Postgres (Recomendado) 🟢
 
 **Prós:**
+
 - ✅ Gratuito (Hobby plan)
 - ✅ Gerenciado pela Vercel
 - ✅ Fácil setup
@@ -155,17 +167,20 @@ A Vercel usa um ambiente **serverless** onde:
 **Passos:**
 
 1. **Instalar dependências:**
+
 ```bash
 npm install @vercel/postgres
 npm install -D pg @types/pg
 ```
 
 2. **Adicionar database na Vercel:**
+
    - Dashboard → Storage → Create Database
    - Escolha "Postgres"
    - Copie as variáveis de ambiente geradas
 
 3. **Atualizar Drizzle config:**
+
 ```typescript
 // drizzle.config.ts
 import type { Config } from "drizzle-kit";
@@ -181,9 +196,18 @@ export default {
 ```
 
 4. **Atualizar schema para Postgres:**
+
 ```typescript
 // lib/db/schema.ts
-import { pgTable, serial, text, timestamp, integer, boolean, json } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  integer,
+  boolean,
+  json,
+} from "drizzle-orm/pg-core";
 
 export const activitiesLocal = pgTable("activities_local", {
   id: serial("id").primaryKey(),
@@ -218,6 +242,7 @@ export const pendingInputs = pgTable("pending_inputs", {
 ```
 
 5. **Atualizar conexão do banco:**
+
 ```typescript
 // lib/db/index.ts
 import { drizzle } from "drizzle-orm/vercel-postgres";
@@ -227,6 +252,7 @@ export const db = drizzle(sql);
 ```
 
 6. **Push schema para Postgres:**
+
 ```bash
 npm run db:push
 ```
@@ -236,10 +262,12 @@ npm run db:push
 ### Opção 2: Vercel KV (Redis) 🟡
 
 **Prós:**
+
 - ✅ Muito rápido
 - ✅ Gratuito
 
 **Contras:**
+
 - ⚠️ NoSQL (precisa reescrever queries)
 - ⚠️ Não tem Drizzle ORM
 
@@ -248,6 +276,7 @@ npm run db:push
 ### Opção 3: Neon (Postgres Serverless) 🟢
 
 **Prós:**
+
 - ✅ Gratuito (500 MB)
 - ✅ PostgreSQL completo
 - ✅ Funciona com Drizzle
@@ -257,9 +286,11 @@ npm run db:push
 1. Crie conta em [neon.tech](https://neon.tech)
 2. Copie a connection string
 3. Adicione em `.env`:
+
 ```env
 DATABASE_URL=postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb
 ```
+
 4. Siga mesmos passos da Opção 1
 
 ---
@@ -267,10 +298,12 @@ DATABASE_URL=postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb
 ### Opção 4: PlanetScale (MySQL) 🟡
 
 **Prós:**
+
 - ✅ Gratuito
 - ✅ Funciona com Drizzle
 
 **Contras:**
+
 - ⚠️ MySQL (não Postgres)
 - ⚠️ Precisa adaptar queries
 
@@ -285,6 +318,7 @@ DATABASE_URL=postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb
 Vou criar um branch separado com a migration completa para Postgres.
 
 Quer que eu:
+
 1. ✅ Crie o código para Vercel Postgres?
 2. ✅ Configure tudo para você?
 3. ✅ Mantenha SQLite para desenvolvimento local?
