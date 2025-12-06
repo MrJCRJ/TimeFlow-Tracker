@@ -105,7 +105,7 @@ export async function endOngoingActivity() {
   console.log("🔍 Buscando atividade em andamento...");
   const ongoing = await getOngoingActivity();
   console.log("📋 Atividade encontrada:", ongoing);
-  
+
   if (!ongoing || !ongoing.id) {
     console.log("⚠️ Nenhuma atividade em andamento para encerrar");
     return null;
@@ -116,7 +116,11 @@ export async function endOngoingActivity() {
     (endedAt.getTime() - ongoing.startedAt.getTime()) / 60000
   );
 
-  console.log("⏱️ Atualizando atividade com duração:", durationMinutes, "minutos");
+  console.log(
+    "⏱️ Atualizando atividade com duração:",
+    durationMinutes,
+    "minutos"
+  );
   await db.activities.update(ongoing.id, {
     endedAt,
     durationMinutes,
@@ -136,8 +140,13 @@ export async function startNewActivity(
   category?: string,
   aiResponse?: string
 ) {
-  console.log("🔄 startNewActivity chamado:", { title, summary, category, aiResponse });
-  
+  console.log("🔄 startNewActivity chamado:", {
+    title,
+    summary,
+    category,
+    aiResponse,
+  });
+
   // Encerra atividade em andamento
   console.log("🔚 Encerrando atividade anterior...");
   const previousActivity = await endOngoingActivity();
