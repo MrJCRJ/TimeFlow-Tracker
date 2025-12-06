@@ -8,16 +8,27 @@
 [![DeepSeek](https://img.shields.io/badge/DeepSeek-AI-purple)](https://deepseek.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## ⚠️ Aplicação Local
+---
 
-**TimeFlow Tracker é uma aplicação desktop/local** que roda no seu computador.
+## 🚨 IMPORTANTE: Aplicação Local APENAS
+
+> **⚠️ Este projeto NÃO funciona na Vercel/Netlify!**
+> 
+> Usa SQLite (arquivo local) que é incompatível com plataformas serverless.
+> 
+> **Para usar: Clone e rode localmente.**
+
+---
+
+## ⚠️ Aplicação Desktop/Local
+
+**TimeFlow Tracker é uma aplicação que roda no SEU computador.**
 
 - 💾 **100% Local**: Todos os dados ficam no seu computador (SQLite)
 - 🔒 **Privacidade Total**: Nada é enviado para nuvem (exceto API da IA)
 - 🖥️ **Sem servidor**: Não requer deploy ou hospedagem
 - 📦 **Portátil**: Seu banco de dados é um único arquivo `.db`
-
-> **Nota**: Este projeto **não é compatível com Vercel/Netlify** pois usa SQLite. Para uso pessoal apenas.
+- ❌ **Não funciona na Vercel**: SQLite incompatível com serverless
 
 ## ✨ O que torna o TimeFlow único?
 
