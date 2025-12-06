@@ -1,11 +1,23 @@
 # 🕐 TimeFlow Tracker
 
-> **Rastreador de atividades inteligente com IA** - Automático, simples e adaptável.
+> **Rastreador de atividades inteligente com IA** - 100% Local, Privado e Automático.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![SQLite](https://img.shields.io/badge/SQLite-3-green?logo=sqlite)](https://www.sqlite.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Local-green?logo=sqlite)](https://www.sqlite.org/)
 [![DeepSeek](https://img.shields.io/badge/DeepSeek-AI-purple)](https://deepseek.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## ⚠️ Aplicação Local
+
+**TimeFlow Tracker é uma aplicação desktop/local** que roda no seu computador.
+
+- 💾 **100% Local**: Todos os dados ficam no seu computador (SQLite)
+- 🔒 **Privacidade Total**: Nada é enviado para nuvem (exceto API da IA)
+- 🖥️ **Sem servidor**: Não requer deploy ou hospedagem
+- 📦 **Portátil**: Seu banco de dados é um único arquivo `.db`
+
+> **Nota**: Este projeto **não é compatível com Vercel/Netlify** pois usa SQLite. Para uso pessoal apenas.
 
 ## ✨ O que torna o TimeFlow único?
 
@@ -14,16 +26,16 @@ Diferente de outros time trackers que exigem botões start/stop e timers manuais
 - 🎯 **Zero fricção**: Apenas digite o que está fazendo
 - 🤖 **IA integrada**: Análise automática com aprendizado contínuo
 - 📊 **Auto-análise**: Insights diários, semanais e mensais automáticos
-- 💾 **Privacidade**: Dados 100% locais (SQLite)
+- 💾 **100% Local**: Dados privados no seu computador (SQLite)
 - 🔄 **Fluxo contínuo**: Nova atividade = anterior encerrada automaticamente
-- 📱 **PWA**: Funciona offline e pode ser instalado
+- 📱 **PWA**: Funciona offline e pode ser instalado como app
 
 ## 🚀 Início Rápido
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/seu-usuario/timeflow-tracker.git
-cd timeflow-tracker
+git clone https://github.com/MrJCRJ/TimeFlow-Tracker.git
+cd TimeFlow-Tracker
 
 # 2. Instale as dependências
 npm install
@@ -41,7 +53,10 @@ npm run dev
 
 Acesse: **http://localhost:3000**
 
-> ⚠️ **IMPORTANTE**: A API DeepSeek é obrigatória. Sem ela, o sistema não fará análises inteligentes.
+> ⚠️ **IMPORTANTE**: 
+> - A API DeepSeek é obrigatória para análises inteligentes
+> - Mantenha o terminal rodando enquanto usa o app
+> - Seus dados ficam salvos em `local.db`
 
 ## 🎯 Como Funciona
 
