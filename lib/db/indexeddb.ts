@@ -194,11 +194,14 @@ export async function exportAllData() {
 export async function importAllData(data: any) {
   // Limpa dados existentes
   await clearAllData();
+  
+  console.log("📥 Importando dados:", data);
 
   // Importa atividades
   if (data.activities && Array.isArray(data.activities)) {
+    console.log(`📊 Importando ${data.activities.length} atividades...`);
     for (const activity of data.activities) {
-      await db.activities.add({
+      const imported = {
         title: activity.title,
         summary: activity.summary,
         category: activity.category,
@@ -206,12 +209,16 @@ export async function importAllData(data: any) {
         startedAt: new Date(activity.startedAt),
         endedAt: activity.endedAt ? new Date(activity.endedAt) : undefined,
         durationMinutes: activity.durationMinutes,
-      });
+      };
+      console.log("📝 Importando atividade:", imported);
+      await db.activities.add(imported);
     }
+    console.log("✅ Atividades importadas!");
   }
 
   // Importa feedbacks
   if (data.feedbacks && Array.isArray(data.feedbacks)) {
+    console.log(`💡 Importando ${data.feedbacks.length} feedbacks...`);
     for (const feedback of data.feedbacks) {
       await db.feedbacks.add({
         date: feedback.date,
@@ -223,10 +230,12 @@ export async function importAllData(data: any) {
         createdAt: new Date(feedback.createdAt),
       });
     }
+    console.log("✅ Feedbacks importados!");
   }
 
   // Importa pending inputs
   if (data.pendingInputs && Array.isArray(data.pendingInputs)) {
+    console.log(`⏳ Importando ${data.pendingInputs.length} pending inputs...`);
     for (const pending of data.pendingInputs) {
       await db.pendingInputs.add({
         text: pending.text,
@@ -238,5 +247,8 @@ export async function importAllData(data: any) {
         result: pending.result,
       });
     }
+    console.log("✅ Pending inputs importados!");
   }
+  
+  console.log("🎉 Importação concluída!");
 }
