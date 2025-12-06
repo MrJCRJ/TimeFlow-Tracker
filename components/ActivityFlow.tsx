@@ -144,7 +144,7 @@ export default function ActivityFlow() {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full flex flex-col sm:flex-row gap-2 sm:gap-3"
+        className="w-full flex gap-2"
       >
         <input
           type="text"
@@ -152,15 +152,15 @@ export default function ActivityFlow() {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Digite sua atividade..."
           disabled={isSubmitting}
-          className="flex-1 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="flex-1 px-3 py-2.5 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed min-w-0"
           autoFocus
         />
         <button
           type="submit"
           disabled={isSubmitting || !title.trim()}
-          className="px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-base sm:text-lg font-bold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:min-w-[140px] border-2 border-blue-800"
+          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-bold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-800 flex-shrink-0"
         >
-          {isSubmitting ? "⏳ Enviando..." : "📤 Enviar"}
+          {isSubmitting ? "⏳" : "📤"}
         </button>
       </form>
 

@@ -152,7 +152,7 @@ export default function DataManager() {
   };
 
   return (
-    <div className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 z-50">
+    <div className="fixed bottom-16 sm:bottom-20 left-4 sm:left-6 z-50">
       {/* Menu */}
       {showMenu && (
         <>
@@ -163,7 +163,7 @@ export default function DataManager() {
           />
 
           {/* Menu de opções */}
-          <div className="absolute bottom-14 sm:bottom-16 left-0 bg-white rounded-lg shadow-2xl border border-gray-200 p-2 min-w-[180px] sm:min-w-[200px]">
+          <div className="absolute bottom-12 sm:bottom-14 left-0 bg-white rounded-lg shadow-2xl border border-gray-200 p-2 min-w-[180px] sm:min-w-[200px]">
             <button
               onClick={handleExport}
               disabled={isProcessing}
