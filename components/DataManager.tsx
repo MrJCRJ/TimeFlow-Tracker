@@ -70,7 +70,9 @@ export default function DataManager() {
           const importData = JSON.parse(text);
 
           if (!importData.version || !importData.data) {
-            throw new Error("Formato de arquivo inválido. Use um arquivo exportado pelo TimeFlow.");
+            throw new Error(
+              "Formato de arquivo inválido. Use um arquivo exportado pelo TimeFlow."
+            );
           }
 
           // Envia dados para API de importação (passa o objeto completo)
@@ -85,7 +87,8 @@ export default function DataManager() {
           const result = await response.json();
 
           if (response.ok) {
-            const msg = `✅ Importação concluída!\n\n` +
+            const msg =
+              `✅ Importação concluída!\n\n` +
               `📊 Atividades: ${result.imported.activities}\n` +
               `💡 Insights: ${result.imported.feedbacks}`;
             alert(msg);
@@ -95,8 +98,11 @@ export default function DataManager() {
           }
         } catch (error) {
           console.error("Erro ao importar:", error);
-          const message = error instanceof Error ? error.message : "Erro desconhecido";
-          alert(`❌ Erro ao importar dados\n\n${message}\n\nVerifique se o arquivo é um backup válido do TimeFlow.`);
+          const message =
+            error instanceof Error ? error.message : "Erro desconhecido";
+          alert(
+            `❌ Erro ao importar dados\n\n${message}\n\nVerifique se o arquivo é um backup válido do TimeFlow.`
+          );
         } finally {
           setIsProcessing(false);
           setShowMenu(false);

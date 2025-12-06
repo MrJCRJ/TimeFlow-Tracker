@@ -33,7 +33,8 @@ export async function POST(request: Request) {
               ? new Date(activity.timestamp)
               : new Date(),
             endedAt: activity.endedAt ? new Date(activity.endedAt) : null,
-            durationMinutes: activity.durationMinutes || activity.duration || null,
+            durationMinutes:
+              activity.durationMinutes || activity.duration || null,
           });
           importedActivities++;
         } catch (err) {
@@ -54,7 +55,9 @@ export async function POST(request: Request) {
             score: feedback.score || null,
             insights: feedback.insights || null,
             suggestion: feedback.suggestion || feedback.suggestions || null,
-            createdAt: feedback.createdAt ? new Date(feedback.createdAt) : new Date(),
+            createdAt: feedback.createdAt
+              ? new Date(feedback.createdAt)
+              : new Date(),
           });
           importedFeedbacks++;
         } catch (err) {
