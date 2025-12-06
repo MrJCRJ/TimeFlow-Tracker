@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from "react";
 import { startNewActivity, addPendingInput } from "@/lib/db/indexeddb";
-import { processActivityWithAI } from "@/lib/ai-service";
 import { useTodayActivities } from "@/lib/hooks/useDatabase";
 
 export default function ActivityFlow() {
@@ -108,12 +107,27 @@ export default function ActivityFlow() {
             }
           : undefined;
 
-        // Processa com IA
+        // Processa com IA via API
         console.log("🤖 Processando com IA:", input);
-        const aiResult = await processActivityWithAI(input, {
-          previousActivity,
-          todayStats,
+        const aiResponse = await fetch("/api/process-activity", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: input,
+            context: {
+              previousActivity,
+              todayStats,
+            },
+          }),
         });
+
+        if (!aiResponse.ok) {
+          throw new Error("Erro ao processar com IA");
+        }
+
+        const aiResult = await aiResponse.json();
         console.log("✅ IA respondeu:", aiResult);
 
         // Salva no IndexedDB
