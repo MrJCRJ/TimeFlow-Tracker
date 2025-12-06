@@ -59,19 +59,29 @@ Retorne APENAS um JSON válido (sem markdown):
 }
 
 REGRAS DE CATEGORIZAÇÃO:
-- Se mencionou FINALIZAR/CONCLUIR projeto/trabalho E algo pessoal depois (banho, descansar, etc), use a categoria da NOVA atividade pessoal
+- Se mencionou MÚLTIPLAS atividades (ex: "banho e descansar", "treinar enquanto escuta música"):
+  * Escolha a atividade PRINCIPAL (a que leva mais tempo ou é o foco)
+  * Exemplos: "banho e descansar" → 🚿 Higiene (banho é a ação principal)
+  * "treinar enquanto escuta música" → 🧘 Saúde (treino é principal, música é secundária)
+  * "cozinhar e assistir série" → 🍳 Alimentação (cozinhar é a ação, série é acompanhamento)
+
+- Se mencionou FINALIZAR uma coisa e fazer OUTRA depois:
+  * Foque na PRÓXIMA atividade, não na que finalizou
+  * Exemplo: "finalizei projeto, vou tomar banho" → 🚿 Higiene
+
+CATEGORIAS:
 - 💼 Trabalho: projetos, reuniões, tarefas profissionais, programação, desenvolvimento
 - 🏠 Casa: limpeza, organização, arrumar casa, tarefas domésticas
 - 🚿 Higiene: banho, escovar dentes, lavar rosto, barbear, cuidados pessoais
-- 🧘 Saúde: exercícios, descanso, meditação, dormir, alongamento, relaxar
+- 🧘 Saúde: exercícios, treino, descanso, meditação, dormir, alongamento, relaxar
 - 🍳 Alimentação: cozinhar, comer, preparar comida, almoço, jantar, lanche
 - 🎮 Lazer: jogos, séries, filmes, hobby, diversão, entretenimento
 - 📚 Estudos: cursos, leitura, aprendizado, faculdade, pesquisa
 
 IMPORTANTE:
-- Summary: foque na PRÓXIMA ação se houver transição (ex: "Banho" se disse "finalizei X agora vou tomar banho")
-- Category: escolha baseado na PRÓXIMA atividade, não na anterior mencionada
-- Response: reconheça a conquista E incentive a próxima ação
+- Summary: use a atividade PRINCIPAL (ex: "Treinar" não "Treinar e ouvir música")
+- Category: baseie na ação que leva mais tempo/esforço
+- Response: reconheça TODAS as ações mencionadas, mas foque na principal
 ${contextInfo}${statsInfo}
 
 Seja natural e humano!`;
