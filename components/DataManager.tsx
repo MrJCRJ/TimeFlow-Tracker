@@ -151,6 +151,29 @@ export default function DataManager() {
     }
   };
 
+  const handleClearCache = async () => {
+    if (!confirm("⚠️ Limpar cache do app?\n\nIsto removerá caches estáticos e forçará o reload.")) return;
+    try {
+      setIsProcessing(true);
+      // Remove todos os caches
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((n) => caches.delete(n)));
+      // Unregister service workers
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+      }
+      alert("✅ Cache limpo. Recarregando...");
+      window.location.reload();
+    } catch (error) {
+      console.error("Erro ao limpar cache:", error);
+      alert("❌ Erro ao limpar cache");
+    } finally {
+      setIsProcessing(false);
+      setShowMenu(false);
+    }
+  };
+
   return (
     <div className="fixed bottom-16 sm:bottom-20 left-4 sm:left-6 z-50">
       {/* Menu */}
@@ -203,6 +226,20 @@ export default function DataManager() {
                   Debug
                 </div>
                 <div className="text-xs text-blue-400">Ver dados</div>
+              </div>
+            </button>
+
+            <button
+              onClick={handleClearCache}
+              disabled={isProcessing}
+              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-yellow-50 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
+            >
+              <span className="text-xl sm:text-2xl">🧹</span>
+              <div>
+                <div className="font-medium text-yellow-700 text-sm sm:text-base">
+                  Limpar Cache
+                </div>
+                <div className="text-xs text-yellow-500">Remove caches estáticos</div>
               </div>
             </button>
 

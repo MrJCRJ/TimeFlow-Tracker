@@ -69,3 +69,13 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
+
+// Recebe mensagens do cliente, por exemplo para "skip waiting" e ativar nova versão imediatamente
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+  const { type } = event.data;
+  if (type === 'SKIP_WAITING') {
+    console.log('🟢 SW: Recebeu SKIP_WAITING');
+    self.skipWaiting();
+  }
+});
