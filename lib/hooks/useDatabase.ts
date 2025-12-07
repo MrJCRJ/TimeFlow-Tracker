@@ -14,10 +14,14 @@ export function useTodayActivities() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Filtra manualmente pois comparação de Date com índices pode falhar
+    // Filtra e ordena por startedAt (ordem cronológica)
     return db.activities
       .toArray()
-      .then((all) => all.filter((a) => a.startedAt >= today));
+      .then((all) =>
+        all
+          .filter((a) => a.startedAt >= today)
+          .sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime())
+      );
   });
   return activities || [];
 }

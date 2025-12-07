@@ -87,8 +87,18 @@ Seja preciso e direto. Textos muito curtos como "jogar", "limpeza" são atividad
       };
     }
 
+    // Limpa markdown code blocks se houver (```json ... ```)
+    let cleanContent = content.trim();
+    if (cleanContent.startsWith("```json")) {
+      cleanContent = cleanContent
+        .replace(/^```json\s*/, "")
+        .replace(/```\s*$/, "");
+    } else if (cleanContent.startsWith("```")) {
+      cleanContent = cleanContent.replace(/^```\s*/, "").replace(/```\s*$/, "");
+    }
+
     // Parse do JSON retornado pela IA
-    const result = JSON.parse(content) as IntentResult;
+    const result = JSON.parse(cleanContent) as IntentResult;
     console.log("🤖 IA detectou intenção:", result);
     return {
       ...result,

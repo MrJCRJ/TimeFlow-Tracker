@@ -147,10 +147,35 @@ export async function startNewActivity(
     aiResponse,
   });
 
-  // Encerra atividade em andamento
-  console.log("🔚 Encerrando atividade anterior...");
-  const previousActivity = await endOngoingActivity();
-  console.log("✅ Atividade anterior encerrada:", previousActivity);
+  // Verifica se há atividade em andamento
+  console.log("🔚 Verificando atividade em andamento...");
+  const ongoing = await getOngoingActivity();
+
+  if (ongoing) {
+    console.log("📋 Atividade em andamento encontrada:", {
+      id: ongoing.id,
+      title: ongoing.title,
+      startedAt: ongoing.startedAt,
+      startedAtISO: ongoing.startedAt.toISOString(),
+    });
+
+    // Encerra apenas se for do HOJE (não de dias anteriores importados)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const activityDate = new Date(ongoing.startedAt);
+    activityDate.setHours(0, 0, 0, 0);
+
+    if (activityDate.getTime() === today.getTime()) {
+      console.log("✅ Atividade é de hoje - encerrando...");
+      await endOngoingActivity();
+    } else {
+      console.log("⚠️ Atividade é de dia anterior - NÃO encerrando");
+      console.log("   Data da atividade:", activityDate.toISOString());
+      console.log("   Data de hoje:", today.toISOString());
+    }
+  } else {
+    console.log("✅ Nenhuma atividade em andamento");
+  }
 
   // Cria nova atividade
   console.log("➕ Criando nova atividade...");
@@ -165,7 +190,7 @@ export async function startNewActivity(
 
   return {
     id,
-    previousActivity,
+    previousActivity: ongoing,
   };
 }
 
@@ -220,19 +245,42 @@ export async function importAllData(data: any) {
 
   console.log("📥 Importando dados:", data);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   // Importa atividades
   if (data.activities && Array.isArray(data.activities)) {
     console.log(`📊 Importando ${data.activities.length} atividades...`);
     for (const activity of data.activities) {
+      const activityDate = new Date(activity.startedAt);
+      const activityDayStart = new Date(activityDate);
+      activityDayStart.setHours(0, 0, 0, 0);
+
+      // Se a atividade é de um dia anterior E não tem endedAt, força finalização
+      const isOldDay = activityDayStart.getTime() < today.getTime();
+      const needsEndDate = !activity.endedAt && isOldDay;
+
       const imported = {
         title: activity.title,
         summary: activity.summary,
         category: activity.category,
         aiResponse: activity.aiResponse,
         startedAt: new Date(activity.startedAt),
-        endedAt: activity.endedAt ? new Date(activity.endedAt) : undefined,
-        durationMinutes: activity.durationMinutes,
+        endedAt: needsEndDate
+          ? new Date(activity.startedAt.getTime() + 60000) // +1 min se não tinha duração
+          : activity.endedAt
+          ? new Date(activity.endedAt)
+          : undefined,
+        durationMinutes: needsEndDate ? 1 : activity.durationMinutes,
       };
+
+      if (needsEndDate) {
+        console.log(
+          "⚠️ Atividade antiga sem endedAt - forçando finalização:",
+          imported.title
+        );
+      }
+
       console.log("📝 Importando atividade:", imported);
       await db.activities.add(imported);
     }

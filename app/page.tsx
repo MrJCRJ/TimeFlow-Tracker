@@ -5,15 +5,19 @@ import SetupWarning from "@/components/SetupWarning";
 import DayFeedback from "@/components/DayFeedback";
 import PendingQueueMonitor from "@/components/PendingQueueMonitor";
 import AutoAnalyzer from "@/components/AutoAnalyzer";
+import ManualAnalyzer from "@/components/ManualAnalyzer";
+import HistoryViewer from "@/components/HistoryViewer";
 import DataManager from "@/components/DataManager";
 
-// Force rebuild - v2
+// Force rebuild - v3
 export default function HomePage() {
   return (
     <main className="min-h-screen pb-20">
       <SetupWarning />
       <PendingQueueMonitor />
       <AutoAnalyzer />
+      <ManualAnalyzer />
+      <HistoryViewer />
       <DataManager />
 
       {/* Header fixo com campo de input */}

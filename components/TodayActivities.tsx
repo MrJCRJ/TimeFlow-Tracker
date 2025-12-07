@@ -15,6 +15,14 @@ export default function TodayActivities() {
   const currentActivity = allActivities?.find((a) => !a.endedAt) || null;
   const activities = allActivities?.filter((a) => a.endedAt) || [];
 
+  // Verifica se há atividades de dias anteriores sendo mostradas
+  const hasOldActivities = activities.some((a) => {
+    const activityDate = new Date(a.startedAt);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return activityDate < today;
+  });
+
   useEffect(() => {
     // Atualiza resposta da IA
     if (currentActivity && currentActivity.aiResponse) {
@@ -98,34 +106,57 @@ export default function TodayActivities() {
 
       {activities.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-gray-700">HOJE</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-gray-700">HOJE</h2>
+            {hasOldActivities && (
+              <span className="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                ⚠️ Contém atividades antigas
+              </span>
+            )}
+          </div>
           <div className="space-y-2">
-            {activities.map((activity) => (
-              <div
-                key={activity.id}
-                className="bg-white border border-gray-200 rounded-lg p-2.5 hover:shadow-sm transition-shadow"
-              >
-                <div className="flex justify-between items-start gap-2">
-                  <div className="flex-1 min-w-0">
-                    {activity.category && (
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        {activity.category}
+            {activities.map((activity) => {
+              const activityDate = new Date(activity.startedAt);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const isOld = activityDate < today;
+
+              return (
+                <div
+                  key={activity.id}
+                  className={`bg-white border rounded-lg p-2.5 hover:shadow-sm transition-shadow ${
+                    isOld
+                      ? "border-orange-300 bg-orange-50/50"
+                      : "border-gray-200"
+                  }`}
+                >
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      {activity.category && (
+                        <div className="text-xs text-gray-500 mb-0.5 flex items-center gap-1">
+                          {activity.category}
+                          {isOld && (
+                            <span className="text-orange-600 text-xs">
+                              📅 {activityDate.toLocaleDateString("pt-BR")}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="font-medium text-sm text-gray-900 break-words">
+                        {activity.summary || activity.title}
                       </div>
-                    )}
-                    <div className="font-medium text-sm text-gray-900 break-words">
-                      {activity.summary || activity.title}
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {formatTime(activity.startedAt)} -{" "}
+                        {activity.endedAt && formatTime(activity.endedAt)}
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {formatTime(activity.startedAt)} -{" "}
-                      {activity.endedAt && formatTime(activity.endedAt)}
+                    <div className="text-xs font-semibold text-blue-600 whitespace-nowrap">
+                      {formatDuration(activity.durationMinutes || 0)}
                     </div>
-                  </div>
-                  <div className="text-xs font-semibold text-blue-600 whitespace-nowrap">
-                    {formatDuration(activity.durationMinutes || 0)}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
