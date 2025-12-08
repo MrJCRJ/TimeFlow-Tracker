@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { exportAllData, importAllData, clearAllData } from "@/lib/db/indexeddb";
+import { clearAllData, exportAllData } from "@/lib/db/indexeddb";
+import { exportDataToFile } from "@/lib/export-utils";
+import { importDataFromFile } from "@/lib/import-utils";
 
 /**
  * Componente para importar/exportar dados do IndexedDB
@@ -13,25 +15,7 @@ export default function DataManager() {
   const handleExport = async () => {
     try {
       setIsProcessing(true);
-
-      // Exporta TODOS os dados do IndexedDB
-      const exportData = await exportAllData();
-
-      // Cria arquivo para download
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `timeflow-backup-${
-        new Date().toISOString().split("T")[0]
-      }.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
+      await exportDataToFile();
       alert("✅ Dados exportados com sucesso!");
     } catch (error) {
       console.error("Erro ao exportar:", error);
@@ -44,54 +28,25 @@ export default function DataManager() {
 
   const handleImport = async () => {
     try {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".json";
+      setIsProcessing(true);
+      const { activitiesCount, feedbacksCount } = await importDataFromFile();
 
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (!file) return;
-
-        setIsProcessing(true);
-
-        try {
-          const text = await file.text();
-          const importData = JSON.parse(text);
-
-          if (!importData.version || !importData.data) {
-            throw new Error(
-              "Formato de arquivo inválido. Use um arquivo exportado pelo TimeFlow."
-            );
-          }
-
-          // Importa dados diretamente no IndexedDB
-          await importAllData(importData.data);
-
-          const activitiesCount = importData.data.activities?.length || 0;
-          const feedbacksCount = importData.data.feedbacks?.length || 0;
-
-          const msg =
-            `✅ Importação concluída!\n\n` +
-            `📊 Atividades: ${activitiesCount}\n` +
-            `💡 Insights: ${feedbacksCount}`;
-          alert(msg);
-          window.location.reload();
-        } catch (error) {
-          console.error("Erro ao importar:", error);
-          const message =
-            error instanceof Error ? error.message : "Erro desconhecido";
-          alert(
-            `❌ Erro ao importar dados\n\n${message}\n\nVerifique se o arquivo é um backup válido do TimeFlow.`
-          );
-        } finally {
-          setIsProcessing(false);
-          setShowMenu(false);
-        }
-      };
-
-      input.click();
+      const msg =
+        `✅ Importação concluída!\n\n` +
+        `📊 Atividades: ${activitiesCount}\n` +
+        `💡 Insights: ${feedbacksCount}`;
+      alert(msg);
+      window.location.reload();
     } catch (error) {
-      console.error("Erro:", error);
+      console.error("Erro ao importar:", error);
+      const message =
+        error instanceof Error ? error.message : "Erro desconhecido";
+      alert(
+        `❌ Erro ao importar dados\n\n${message}\n\nVerifique se o arquivo é um backup válido do TimeFlow.`
+      );
+    } finally {
+      setIsProcessing(false);
+      setShowMenu(false);
     }
   };
 

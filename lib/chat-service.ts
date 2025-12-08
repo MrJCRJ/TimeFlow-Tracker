@@ -1,11 +1,11 @@
 /**
  * Serviço de Chat com a IA
- * Para conversas, perguntas e feedback (não registra atividade)
+ * Para perguntas FOCADAS em produtividade (não conversa geral)
  */
 
 interface ChatResponse {
   message: string;
-  type: "empathy" | "motivation" | "answer" | "acknowledgment";
+  type: "answer" | "motivation" | "acknowledgment" | "empathy";
   suggestion?: string; // Sugestão opcional de atividade
 }
 
@@ -57,32 +57,29 @@ ${
 }
 `;
 
-  const prompt = `Você é um coach de produtividade empático e humano. O usuário quer CONVERSAR com você, não registrar atividade.
+  const prompt = `Você é um coach de produtividade focado. O usuário fez uma PERGUNTA sobre produtividade/progresso.
 
 Mensagem do usuário: "${userMessage}"
 
 ${contextInfo}
 
 Responda de forma:
-- EMPÁTICA se usuário expressar emoção negativa
-- MOTIVADORA se usuário estiver desanimado
-- COMPREENSIVA se usuário criticar o sistema
-- NATURAL e HUMANA (como um amigo)
-- CURTA (máximo 3 frases)
+- OBJETIVA e DIRETA para perguntas sobre dados (ex: "quanto trabalhei?")
+- MOTIVADORA para pedidos de dica/sugestão
+- BREVE (máximo 2-3 frases)
+- FOCADA EM PRODUTIVIDADE
 
 Retorne APENAS JSON:
 {
-  "message": "sua resposta empática e natural",
-  "type": "empathy|motivation|answer|acknowledgment",
-  "suggestion": "opcional: sugestão leve de atividade se fizer sentido"
+  "message": "sua resposta direta e focada",
+  "type": "answer|motivation",
+  "suggestion": "opcional: sugestão prática se relevante"
 }
 
 IMPORTANTE:
-- NÃO force o usuário a trabalhar
-- Valide os sentimentos dele
-- Se ele criticar você, aceite com humildade
-- Se ele estiver cansado, reconheça isso
-- Seja um AMIGO, não um chefe`;
+- Responda APENAS sobre produtividade/progresso
+- Use os dados do contexto quando relevante
+- Seja prático e acionável`;
 
   try {
     const response = await fetch(

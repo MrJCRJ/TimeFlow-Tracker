@@ -1,9 +1,9 @@
 /**
  * Serviço de Detecção de Intenção com IA
- * A IA detecta automaticamente se o usuário quer conversar ou registrar atividade
+ * A IA detecta automaticamente se o usuário quer registrar atividade ou fazer pergunta focada
  */
 
-export type IntentType = "activity" | "chat" | "question" | "feedback";
+export type IntentType = "activity" | "question" | "off-topic";
 
 interface IntentResult {
   type: IntentType;
@@ -42,16 +42,20 @@ export async function detectIntent(text: string): Promise<IntentResult> {
         messages: [
           {
             role: "system",
-            content: `Você é um classificador de intenção. Analise o texto do usuário e determine se ele quer:
-- "activity": registrar uma atividade/tarefa (ex: "limpeza casa", "jogar", "trabalhar", "estudando")
-- "chat": conversar ou desabafar (ex: "estou desanimado", "tô cansado", "não sei o que fazer")
-- "question": fazer uma pergunta (ex: "como funciona?", "por que preciso disso?")
-- "feedback": dar feedback sobre o sistema (ex: "você é chato", "isso é legal", "não gostei")
+            content: `Você é um classificador de intenção para um app de produtividade. Analise o texto do usuário e determine se ele quer:
 
-Responda APENAS com um JSON no formato:
-{"type": "activity"|"chat"|"question"|"feedback", "confidence": 0.0-1.0, "reasoning": "breve explicação"}
+- "activity": registrar uma atividade/tarefa (ex: "limpeza casa", "jogar", "trabalhar", "estudando", "vou fazer X")
+- "question": fazer pergunta SOBRE PRODUTIVIDADE (ex: "quanto trabalhei?", "qual meu progresso?", "me dê dicas")
+- "off-topic": conversa geral não relacionada (ex: "quem é você?", "conte uma piada", "o que é vida?")
 
-Seja preciso e direto. Textos muito curtos como "jogar", "limpeza" são atividades. Emoções e desabafos são chat.`,
+IMPORTANTE: 
+- Chat geral = "off-topic" (você vai recusar educadamente)
+- Perguntas sobre o app/produtividade = "question" (você responde)
+- Emoções relacionadas ao trabalho = "question" (ex: "tô cansado do trabalho" → dê dica de descanso)
+- Emoções gerais = "off-topic" (ex: "tô triste com a vida" → recuse)
+
+Responda APENAS com JSON:
+{"type": "activity"|"question"|"off-topic", "confidence": 0.0-1.0, "reasoning": "breve explicação"}`,
           },
           {
             role: "user",
@@ -122,41 +126,32 @@ Seja preciso e direto. Textos muito curtos como "jogar", "limpeza" são atividad
 function detectIntentFallback(text: string): IntentResult {
   const normalized = text.toLowerCase().trim();
 
-  // Pergunta óbvia
-  if (normalized.includes("?")) {
-    return {
-      type: "question",
-      confidence: 0.9,
-      reasoning: "Contém interrogação",
-    };
-  }
-
-  // Palavras de emoção/desabafo
-  const emotionWords = [
-    "desanimado",
-    "triste",
-    "cansado",
-    "chato",
-    "feliz",
-    "estressado",
+  // Pergunta sobre produtividade
+  const productivityQuestions = [
+    "quanto",
+    "progresso",
+    "dica",
+    "sugestão",
+    "melhorar",
+    "produtividade",
   ];
-  if (emotionWords.some((word) => normalized.includes(word))) {
-    return {
-      type: "chat",
-      confidence: 0.8,
-      reasoning: "Contém palavra emocional",
-    };
-  }
-
-  // Feedback sobre o sistema
   if (
-    normalized.includes("você") ||
-    normalized.match(/\b(legal|ruim|bom|útil)\b/)
+    normalized.includes("?") &&
+    productivityQuestions.some((word) => normalized.includes(word))
   ) {
     return {
-      type: "feedback",
+      type: "question",
       confidence: 0.8,
-      reasoning: "Parece feedback sobre o sistema",
+      reasoning: "Pergunta sobre produtividade",
+    };
+  }
+
+  // Perguntas gerais = off-topic
+  if (normalized.includes("?")) {
+    return {
+      type: "off-topic",
+      confidence: 0.9,
+      reasoning: "Pergunta não relacionada",
     };
   }
 

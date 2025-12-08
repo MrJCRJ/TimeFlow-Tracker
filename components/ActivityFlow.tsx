@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { startNewActivity, addPendingInput } from "@/lib/db/indexeddb";
 import { useTodayActivities } from "@/lib/hooks/useDatabase";
+import { checkAndGenerateAutoFeedback } from "@/lib/auto-feedback";
+import AutoFeedbackModal from "./AutoFeedbackModal";
 
 export default function ActivityFlow() {
   const [title, setTitle] = useState("");
@@ -10,13 +12,33 @@ export default function ActivityFlow() {
   const [chatResponse, setChatResponse] = useState<string | null>(null);
   const [showChatBubble, setShowChatBubble] = useState(false);
   const [fallbackWarning, setFallbackWarning] = useState<string | null>(null);
+  const [showAutoFeedback, setShowAutoFeedback] = useState(false);
+  const [pendingAutoFeedback, setPendingAutoFeedback] = useState(false);
 
   const todayActivities = useTodayActivities();
+
+  // Verifica se precisa gerar feedback ao carregar
+  useEffect(() => {
+    checkForAutoFeedback();
+  }, []);
+
+  const checkForAutoFeedback = async () => {
+    const { needsFeedback } = await checkAndGenerateAutoFeedback();
+    if (needsFeedback) {
+      setPendingAutoFeedback(true);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!title.trim() || isSubmitting) return;
+
+    // Se há feedback pendente, mostra o modal primeiro
+    if (pendingAutoFeedback) {
+      setShowAutoFeedback(true);
+      return;
+    }
 
     setIsSubmitting(true);
     setChatResponse(null);
@@ -59,12 +81,17 @@ export default function ActivityFlow() {
         setTimeout(() => setFallbackWarning(null), 5000);
       }
 
-      // Se for conversa/pergunta/feedback → modo chat
-      if (
-        intent.type === "chat" ||
-        intent.type === "question" ||
-        intent.type === "feedback"
-      ) {
+      // Se for off-topic (conversa geral) → recusa educadamente
+      if (intent.type === "off-topic") {
+        setChatResponse(
+          "🎯 Estou aqui apenas para ajudar você a registrar suas atividades e melhorar sua produtividade! Que tal me contar o que você está fazendo agora?"
+        );
+        setShowChatBubble(true);
+        setTitle("");
+        setTimeout(() => setShowChatBubble(false), 8000);
+      }
+      // Se for pergunta sobre produtividade → responde
+      else if (intent.type === "question") {
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: {
@@ -107,6 +134,17 @@ export default function ActivityFlow() {
             }
           : undefined;
 
+        // Busca estatísticas do usuário para sistema híbrido
+        const allActivities = todayActivities || [];
+        const activitiesWithAI = allActivities.filter((a) => a.aiResponse);
+        const lastAIActivity = activitiesWithAI[activitiesWithAI.length - 1];
+
+        const userStats = {
+          totalActivities: allActivities.length,
+          todayCount: finishedActivities.length,
+          lastAIDate: lastAIActivity?.startedAt.toISOString() || null,
+        };
+
         // Processa com IA via API
         console.log("🤖 Processando com IA:", input);
         const aiResponse = await fetch("/api/process-activity", {
@@ -120,6 +158,7 @@ export default function ActivityFlow() {
               previousActivity,
               todayStats,
             },
+            userStats,
           }),
         });
 
@@ -151,6 +190,19 @@ export default function ActivityFlow() {
 
   return (
     <div className="w-full relative">
+      {/* Aviso de feedback pendente */}
+      {pendingAutoFeedback && !showAutoFeedback && (
+        <div className="mb-3 bg-purple-50 border-2 border-purple-300 text-purple-900 px-4 py-3 rounded-lg text-sm flex items-center gap-3">
+          <span className="text-xl">📊</span>
+          <div className="flex-1">
+            <p className="font-semibold">Feedback Automático Pendente</p>
+            <p className="text-xs text-purple-700">
+              Registre uma atividade para gerar análises dos dias anteriores
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Aviso de fallback */}
       {fallbackWarning && (
         <div className="mb-3 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
@@ -192,6 +244,20 @@ export default function ActivityFlow() {
             </p>
           </div>
         </div>
+      )}
+
+      {/* Modal de Auto Feedback */}
+      {showAutoFeedback && (
+        <AutoFeedbackModal
+          onComplete={() => {
+            setShowAutoFeedback(false);
+            setPendingAutoFeedback(false);
+            // Reenvia o formulário após completar feedback
+            if (title.trim()) {
+              handleSubmit({ preventDefault: () => {} } as FormEvent);
+            }
+          }}
+        />
       )}
 
       {/* Bubble de resposta do chat */}

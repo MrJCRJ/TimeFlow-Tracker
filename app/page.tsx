@@ -1,44 +1,121 @@
+"use client";
+
+import { useState } from "react";
 import ActivityFlow from "@/components/ActivityFlow";
 import TodayActivities from "@/components/TodayActivities";
 import InsightsFeed from "@/components/InsightsFeed";
 import SetupWarning from "@/components/SetupWarning";
-import DayFeedback from "@/components/DayFeedback";
 import PendingQueueMonitor from "@/components/PendingQueueMonitor";
-import AutoAnalyzer from "@/components/AutoAnalyzer";
-import ManualAnalyzer from "@/components/ManualAnalyzer";
-import HistoryViewer from "@/components/HistoryViewer";
 import DataManager from "@/components/DataManager";
+import QuickStats from "@/components/QuickStats";
+import CollapsibleSection from "@/components/CollapsibleSection";
+import BottomNavigation from "@/components/BottomNavigation";
+import DashboardModal from "@/components/DashboardModal";
+import GoalsModal from "@/components/GoalsModal";
+import PatternsModal from "@/components/PatternsModal";
+import SettingsModal from "@/components/SettingsModal";
+import { useActivities } from "@/lib/hooks/useDatabase";
 
-// Force rebuild - v3
+// Force rebuild - v5 (Mobile-First UI)
 export default function HomePage() {
+  // Estados dos modais
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isGoalsOpen, setIsGoalsOpen] = useState(false);
+  const [isPatternsOpen, setIsPatternsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Dados do banco
+  const activities = useActivities();
+  const todayActivities = activities.filter((a) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return a.startedAt >= today;
+  });
+
+  const currentActivity = todayActivities.find((a) => !a.endedAt) || null;
+  const totalMinutes = todayActivities.reduce(
+    (acc, a) => acc + (a.durationMinutes || 0),
+    0
+  );
+
+  // Estatísticas para Dashboard
+  const dashboardStats = {
+    totalActivities: activities.length,
+    totalHours: Math.floor(
+      activities.reduce((acc, a) => acc + (a.durationMinutes || 0), 0) / 60
+    ),
+    mostProductiveCategory: "💼 Trabalho", // Simplificado
+    streak: 5, // Simplificado
+  };
+
   return (
-    <main className="min-h-screen pb-20">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24">
+      {/* Utilitários invisíveis */}
       <SetupWarning />
       <PendingQueueMonitor />
-      <AutoAnalyzer />
-      <ManualAnalyzer />
-      <HistoryViewer />
       <DataManager />
 
-      {/* Header fixo com campo de input */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-2xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">
-            TimeFlow Tracker
-          </h1>
-          <ActivityFlow />
+      {/* Container Principal */}
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        {/* SEÇÃO SEMPRE VISÍVEL (270px) */}
+        <div className="space-y-4">
+          {/* Input de Atividade */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4">
+            <ActivityFlow />
+          </div>
+
+          {/* Quick Stats */}
+          <QuickStats
+            activitiesCount={todayActivities.length}
+            totalMinutes={totalMinutes}
+            currentActivity={
+              currentActivity
+                ? {
+                    title: currentActivity.title,
+                    durationMinutes: currentActivity.durationMinutes || 0,
+                  }
+                : null
+            }
+          />
         </div>
-      </div>
 
-      {/* Conteúdo com padding para mobile */}
-      <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
-        <DayFeedback />
-        <TodayActivities />
+        {/* SEÇÕES EXPANSÍVEIS */}
+        <CollapsibleSection
+          title="📋 Atividades de Hoje"
+          itemCount={todayActivities.length}
+          defaultExpanded={true}
+        >
+          <TodayActivities />
+        </CollapsibleSection>
 
-        <div className="border-t border-gray-200 pt-6 sm:pt-8">
+        <CollapsibleSection title="💡 Insights" defaultExpanded={false}>
           <InsightsFeed />
-        </div>
+        </CollapsibleSection>
       </div>
+
+      {/* NAVEGAÇÃO INFERIOR FIXA */}
+      <BottomNavigation
+        onDashboardClick={() => setIsDashboardOpen(true)}
+        onGoalsClick={() => setIsGoalsOpen(true)}
+        onPatternsClick={() => setIsPatternsOpen(true)}
+        onSettingsClick={() => setIsSettingsOpen(true)}
+      />
+
+      {/* MODAIS */}
+      <DashboardModal
+        isOpen={isDashboardOpen}
+        onClose={() => setIsDashboardOpen(false)}
+        stats={dashboardStats}
+      />
+      <GoalsModal isOpen={isGoalsOpen} onClose={() => setIsGoalsOpen(false)} />
+      <PatternsModal
+        isOpen={isPatternsOpen}
+        onClose={() => setIsPatternsOpen(false)}
+      />
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </main>
   );
 }
