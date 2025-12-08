@@ -38,6 +38,16 @@ export default function HomePage() {
     0
   );
 
+  // Tempo por categoria (apenas atividades finalizadas)
+  const byCategory: Record<string, number> = {};
+  todayActivities
+    .filter((a) => a.endedAt)
+    .forEach((a) => {
+      const category = a.category || "Sem categoria";
+      byCategory[category] =
+        (byCategory[category] || 0) + (a.durationMinutes || 0);
+    });
+
   // Estatísticas para Dashboard
   const dashboardStats = {
     totalActivities: activities.length,
@@ -73,9 +83,11 @@ export default function HomePage() {
                 ? {
                     title: currentActivity.title,
                     durationMinutes: currentActivity.durationMinutes || 0,
+                    startedAt: currentActivity.startedAt,
                   }
                 : null
             }
+            byCategory={byCategory}
           />
         </div>
 

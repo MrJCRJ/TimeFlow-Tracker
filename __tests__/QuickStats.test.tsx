@@ -1,6 +1,6 @@
 /**
  * Testes de Integração - QuickStats Component
- * Testa exibição de estatísticas em uma linha
+ * Testa exibição de estatísticas por categoria
  */
 
 import { render, screen } from "@testing-library/react";
@@ -9,29 +9,38 @@ import QuickStats from "@/components/QuickStats";
 describe("QuickStats - Integração", () => {
   it("deve renderizar com dados vazios", () => {
     render(
-      <QuickStats activitiesCount={0} totalMinutes={0} currentActivity={null} />
+      <QuickStats
+        activitiesCount={0}
+        totalMinutes={0}
+        currentActivity={null}
+        byCategory={{}}
+      />
     );
 
-    expect(screen.getByText("Atividades")).toBeInTheDocument();
-    expect(screen.getByText("0", { selector: ".text-xl" })).toBeInTheDocument();
-    expect(screen.getByText(/0h 0min/i)).toBeInTheDocument();
-    expect(screen.getByText(/Nenhuma atividade/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Tempo por categoria/i)).not.toBeInTheDocument();
   });
 
-  it("deve exibir estatísticas do dia corretamente", () => {
+  it("deve exibir categorias ordenadas por tempo", () => {
     render(
       <QuickStats
         activitiesCount={5}
         totalMinutes={180}
         currentActivity={null}
+        byCategory={{
+          Trabalho: 120,
+          Estudo: 45,
+          Exercício: 15,
+        }}
       />
     );
 
-    expect(screen.getByText("5")).toBeInTheDocument();
-    expect(screen.getByText(/3h 0min/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tempo por categoria/i)).toBeInTheDocument();
+    expect(screen.getByText("Trabalho")).toBeInTheDocument();
+    expect(screen.getByText(/2h0min/i)).toBeInTheDocument();
   });
 
   it("deve exibir atividade em andamento", () => {
+    const now = new Date();
     render(
       <QuickStats
         activitiesCount={3}
@@ -39,86 +48,122 @@ describe("QuickStats - Integração", () => {
         currentActivity={{
           title: "Trabalhando no projeto",
           durationMinutes: 45,
+          startedAt: new Date(now.getTime() - 45 * 60 * 1000),
         }}
+        byCategory={{ Trabalho: 120 }}
       />
     );
 
     expect(screen.getByText(/Trabalhando no projeto/i)).toBeInTheDocument();
     expect(screen.getByText(/45min/i)).toBeInTheDocument();
+    expect(screen.getByText(/em andamento/i)).toBeInTheDocument();
   });
 
-  it("deve converter minutos em horas corretamente", () => {
+  it("deve mostrar apenas top 3 categorias", () => {
     render(
       <QuickStats
         activitiesCount={10}
-        totalMinutes={245}
+        totalMinutes={300}
         currentActivity={null}
-      />
-    );
-
-    // 245min = 4h 5min
-    expect(screen.getByText(/4h 5min/i)).toBeInTheDocument();
-  });
-
-  it("deve truncar título longo da atividade", () => {
-    render(
-      <QuickStats
-        activitiesCount={1}
-        totalMinutes={30}
-        currentActivity={{
-          title:
-            "Esta é uma atividade com um título muito muito muito longo que precisa ser truncado",
-          durationMinutes: 30,
+        byCategory={{
+          Trabalho: 120,
+          Estudo: 80,
+          Exercício: 60,
+          Lazer: 40,
+          Reunião: 0,
         }}
       />
     );
 
-    const activityText = screen.getByText(/Esta é uma atividade/i);
-    expect(activityText.textContent?.length).toBeLessThan(100);
+    expect(screen.getByText("Trabalho")).toBeInTheDocument();
+    expect(screen.getByText("Estudo")).toBeInTheDocument();
+    expect(screen.getByText("Exercício")).toBeInTheDocument();
+    expect(screen.queryByText("Lazer")).not.toBeInTheDocument();
   });
 
-  it("deve exibir ícones corretos para cada seção", () => {
+  it("deve calcular porcentagem corretamente", () => {
     const { container } = render(
       <QuickStats
         activitiesCount={2}
-        totalMinutes={60}
-        currentActivity={{
-          title: "Teste",
-          durationMinutes: 15,
+        totalMinutes={100}
+        currentActivity={null}
+        byCategory={{
+          Trabalho: 50,
+          Estudo: 50,
         }}
       />
     );
 
-    // Verifica se tem pelo menos 2 emojis/ícones
-    const text = container.textContent || "";
-    const emojiCount = (text.match(/[\u{1F300}-\u{1F9FF}]/gu) || []).length;
-    expect(emojiCount).toBeGreaterThanOrEqual(2);
+    // Verifica se as barras de progresso existem
+    const progressBars = container.querySelectorAll(
+      ".bg-gradient-to-r.from-blue-400"
+    );
+    expect(progressBars.length).toBe(2);
   });
 
-  it("deve ser responsivo em mobile (270px altura)", () => {
-    const { container } = render(
+  it("deve exibir duração em tempo real para atividade em andamento", () => {
+    const now = new Date();
+    const { rerender } = render(
+      <QuickStats
+        activitiesCount={1}
+        totalMinutes={60}
+        currentActivity={{
+          title: "Estudando",
+          durationMinutes: 30,
+          startedAt: new Date(now.getTime() - 30 * 60 * 1000),
+        }}
+        byCategory={{ Estudo: 60 }}
+      />
+    );
+
+    expect(screen.getByText(/30min/i)).toBeInTheDocument();
+
+    // Simula passagem de tempo
+    rerender(
+      <QuickStats
+        activitiesCount={1}
+        totalMinutes={60}
+        currentActivity={{
+          title: "Estudando",
+          durationMinutes: 31,
+          startedAt: new Date(now.getTime() - 31 * 60 * 1000),
+        }}
+        byCategory={{ Estudo: 60 }}
+      />
+    );
+
+    expect(screen.getByText(/31min/i)).toBeInTheDocument();
+  });
+
+  it("deve renderizar sem atividade em andamento", () => {
+    render(
       <QuickStats
         activitiesCount={5}
         totalMinutes={180}
+        currentActivity={null}
+        byCategory={{ Trabalho: 180 }}
+      />
+    );
+
+    expect(screen.queryByText(/🎯 Agora/i)).not.toBeInTheDocument();
+  });
+
+  it("deve ser responsivo e compacto", () => {
+    const { container } = render(
+      <QuickStats
+        activitiesCount={3}
+        totalMinutes={90}
         currentActivity={{
-          title: "Estudando React",
-          durationMinutes: 60,
+          title: "Codificando",
+          durationMinutes: 45,
+          startedAt: new Date(),
         }}
+        byCategory={{ Trabalho: 90 }}
       />
     );
 
     const wrapper = container.firstChild as HTMLElement;
-    expect(wrapper).toHaveClass("h-[270px]");
-  });
-
-  it("deve manter layout visível sempre", () => {
-    const { container } = render(
-      <QuickStats activitiesCount={0} totalMinutes={0} currentActivity={null} />
-    );
-
-    // Verifica que não tem display: none
-    const wrapper = container.firstChild as HTMLElement;
-    const styles = window.getComputedStyle(wrapper);
-    expect(styles.display).not.toBe("none");
+    expect(wrapper).toHaveClass("rounded-2xl");
+    expect(wrapper).toHaveClass("shadow-lg");
   });
 });

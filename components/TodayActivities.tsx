@@ -13,7 +13,9 @@ export default function TodayActivities() {
 
   // Separa atividades em andamento e finalizadas
   const currentActivity = allActivities?.find((a) => !a.endedAt) || null;
-  const activities = allActivities?.filter((a) => a.endedAt) || [];
+  const activities = (allActivities?.filter((a) => a.endedAt) || []).sort(
+    (a, b) => b.startedAt.getTime() - a.startedAt.getTime()
+  ); // Mais recente primeiro
 
   // Verifica se há atividades de dias anteriores sendo mostradas
   const hasOldActivities = activities.some((a) => {

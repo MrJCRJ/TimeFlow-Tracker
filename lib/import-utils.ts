@@ -24,17 +24,20 @@ export async function importDataFromFile(): Promise<{
         const text = await file.text();
         const importData = JSON.parse(text);
 
-        if (!importData.version || !importData.data) {
+        // Valida formato básico
+        if (!importData.data && !importData.activities) {
           throw new Error(
             "Formato de arquivo inválido. Use um arquivo exportado pelo TimeFlow."
           );
         }
 
         // Importa dados diretamente no IndexedDB
-        await importAllData(importData.data);
+        await importAllData(importData);
 
-        const activitiesCount = importData.data.activities?.length || 0;
-        const feedbacksCount = importData.data.feedbacks?.length || 0;
+        // Conta atividades e feedbacks (suporta ambos formatos)
+        const data = importData.data || importData;
+        const activitiesCount = data.activities?.length || 0;
+        const feedbacksCount = data.feedbacks?.length || 0;
 
         resolve({ activitiesCount, feedbacksCount });
       } catch (error) {

@@ -47,12 +47,10 @@ export async function importAllData(data: any) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Valida estrutura básica
-  if (!data || !data.data) {
-    throw new Error("Formato de dados inválido");
-  }
-
-  const importData = data.data || data; // Suporta ambos formatos
+  // Suporta dois formatos:
+  // 1. Formato completo: { version, exportDate, data: { activities, feedbacks } }
+  // 2. Formato direto: { activities, feedbacks }
+  const importData = data.data || data;
 
   // Importa atividades
   if (importData.activities && Array.isArray(importData.activities)) {
