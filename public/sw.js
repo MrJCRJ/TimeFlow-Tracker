@@ -11,8 +11,6 @@ const REMOVED_APIS = [
   '/api/day-stats',
   '/api/pending-queue',
   '/api/flow',
-  '/api/export-all',
-  '/api/import',
   '/api/clear-data',
 ];
 
@@ -28,6 +26,11 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
+  // Não interceptar requisições de autenticação
+  if (url.pathname.startsWith('/api/auth/')) {
+    return; // Deixa passar sem cache
+  }
 
   // Se for uma API removida, retorna 404 imediatamente sem tentar fazer fetch
   if (REMOVED_APIS.some(api => url.pathname === api)) {

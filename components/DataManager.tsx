@@ -2,53 +2,14 @@
 
 import { useState } from "react";
 import { clearAllData, exportAllData } from "@/lib/db/indexeddb";
-import { exportDataToFile } from "@/lib/export-utils";
-import { importDataFromFile } from "@/lib/import-utils";
 
 /**
- * Componente para importar/exportar dados do IndexedDB
+ * Componente para gerenciamento avançado de dados
+ * Mantém apenas funcionalidades essenciais: debug, cache e reset
  */
 export default function DataManager() {
   const [showMenu, setShowMenu] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleExport = async () => {
-    try {
-      setIsProcessing(true);
-      await exportDataToFile();
-      alert("✅ Dados exportados com sucesso!");
-    } catch (error) {
-      console.error("Erro ao exportar:", error);
-      alert("❌ Erro ao exportar dados");
-    } finally {
-      setIsProcessing(false);
-      setShowMenu(false);
-    }
-  };
-
-  const handleImport = async () => {
-    try {
-      setIsProcessing(true);
-      const { activitiesCount, feedbacksCount } = await importDataFromFile();
-
-      const msg =
-        `✅ Importação concluída!\n\n` +
-        `📊 Atividades: ${activitiesCount}\n` +
-        `💡 Insights: ${feedbacksCount}`;
-      alert(msg);
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao importar:", error);
-      const message =
-        error instanceof Error ? error.message : "Erro desconhecido";
-      alert(
-        `❌ Erro ao importar dados\n\n${message}\n\nVerifique se o arquivo é um backup válido do TimeFlow.`
-      );
-    } finally {
-      setIsProcessing(false);
-      setShowMenu(false);
-    }
-  };
 
   const handleClearData = async () => {
     if (
@@ -148,34 +109,6 @@ export default function DataManager() {
           {/* Menu de opções */}
           <div className="absolute bottom-12 sm:bottom-14 left-0 bg-white rounded-lg shadow-2xl border border-gray-200 p-2 min-w-[180px] sm:min-w-[200px]">
             <button
-              onClick={handleExport}
-              disabled={isProcessing}
-              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
-            >
-              <span className="text-xl sm:text-2xl">💾</span>
-              <div>
-                <div className="font-medium text-gray-900 text-sm sm:text-base">
-                  Exportar
-                </div>
-                <div className="text-xs text-gray-500">Backup dos dados</div>
-              </div>
-            </button>
-
-            <button
-              onClick={handleImport}
-              disabled={isProcessing}
-              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
-            >
-              <span className="text-xl sm:text-2xl">📥</span>
-              <div>
-                <div className="font-medium text-gray-900 text-sm sm:text-base">
-                  Importar
-                </div>
-                <div className="text-xs text-gray-500">Restaurar backup</div>
-              </div>
-            </button>
-
-            <button
               onClick={handleDebug}
               disabled={isProcessing}
               className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2 sm:gap-3 disabled:opacity-50"
@@ -215,9 +148,9 @@ export default function DataManager() {
               <span className="text-xl sm:text-2xl">🗑️</span>
               <div>
                 <div className="font-medium text-red-600 text-sm sm:text-base">
-                  Apagar Tudo
+                  Reset Completo
                 </div>
-                <div className="text-xs text-red-400">Limpar dados</div>
+                <div className="text-xs text-red-400">Apagar todos os dados</div>
               </div>
             </button>
           </div>

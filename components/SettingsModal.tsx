@@ -4,6 +4,7 @@
 
 "use client";
 
+import { useSession, signOut } from "next-auth/react";
 import Modal from "./Modal";
 
 interface SettingsModalProps {
@@ -12,6 +13,11 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+  const { data: session } = useSession();
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/login" });
+  };
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="⚙️ Configurações">
       <div className="space-y-6">
@@ -52,6 +58,41 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </span>
             <input type="checkbox" className="w-5 h-5" defaultChecked />
           </label>
+        </div>
+
+        {/* Sincronização Google Drive */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+            ☁️ Sincronização
+          </h3>
+          <div className="space-y-3">
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-green-600">✅</span>
+                <span className="font-medium text-green-800">Backup automático ativado</span>
+              </div>
+              <p className="text-sm text-green-700">
+                Seus dados são salvos automaticamente no Google Drive quando você faz login.
+                Não é necessário fazer backup manual.
+              </p>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {session ? "Logado como " + session.user?.email : "Faça login para sincronizar dados"}
+            </p>
+          </div>
+        </div>
+
+        {/* Conta */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+            👤 Conta
+          </h3>
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          >
+            🚪 Sair
+          </button>
         </div>
 
         {/* Sobre */}

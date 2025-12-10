@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import PWARegister from "@/components/PWARegister";
+import SessionProvider from "@/components/SessionProvider";
+import AutoSyncManager from "@/components/AutoSyncManager";
+import AutoBackupManager from "@/components/AutoBackupManager";
 
 export const metadata: Metadata = {
   title: "TimeFlow Tracker",
@@ -28,8 +31,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="antialiased bg-gray-50">
-        <PWARegister />
-        {children}
+        <SessionProvider>
+          <PWARegister />
+          <AutoSyncManager />
+          <AutoBackupManager />
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

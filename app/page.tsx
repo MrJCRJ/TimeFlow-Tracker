@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import ActivityFlow from "@/components/ActivityFlow";
 import TodayActivities from "@/components/TodayActivities";
 import InsightsFeed from "@/components/InsightsFeed";
@@ -14,15 +16,23 @@ import DashboardModal from "@/components/DashboardModal";
 import GoalsModal from "@/components/GoalsModal";
 import PatternsModal from "@/components/PatternsModal";
 import SettingsModal from "@/components/SettingsModal";
+import Header from "@/components/Header";
 import { useActivities } from "@/lib/hooks/useDatabase";
+import { useAutoBackup } from "@/lib/hooks/useAutoBackup";
 
 // Force rebuild - v5 (Mobile-First UI)
 export default function HomePage() {
-  // Estados dos modais
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Estados dos modais - DEVEM vir antes de qualquer return condicional
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isGoalsOpen, setIsGoalsOpen] = useState(false);
   const [isPatternsOpen, setIsPatternsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Hook de backup automático
+  useAutoBackup();
 
   // Dados do banco
   const activities = useActivities();
@@ -58,8 +68,33 @@ export default function HomePage() {
     streak: 5, // Simplificado
   };
 
+  useEffect(() => {
+    if (status === "loading") return; // Ainda carregando
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null; // Redirecionará
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24">
+      {/* Header com informações do usuário */}
+      <Header />
+
       {/* Utilitários invisíveis */}
       <SetupWarning />
       <PendingQueueMonitor />

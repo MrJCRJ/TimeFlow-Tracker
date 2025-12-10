@@ -28,8 +28,23 @@
 - 🔒 **Privacidade Total**: Nada enviado para servidor (exceto IA)
 - 🌐 **Funciona online**: Deploy na Vercel/Netlify OK
 - 📱 **PWA Completo**: Funciona offline após primeira visita
-- 📦 **Exportar/Importar**: Faça backup em JSON quando quiser
-- 🔄 **Multi-dispositivo**: Use em qualquer navegador (dados separados por navegador)
+- ☁️ **Backup automático**: Dados sincronizados automaticamente no Google Drive
+- 🔄 **Multi-dispositivo**: Use em qualquer navegador com sincronização na nuvem
+
+## 🔐 Autenticação Google
+
+O app agora suporta login com Google para sincronização de dados na nuvem:
+
+- **Login único**: Use sua conta Google
+- **Backup automático**: Dados salvos no Google Drive
+- **Sincronização**: Acesse seus dados em qualquer dispositivo
+- **Privacidade**: Dados criptografados e seguros
+
+### Como configurar:
+
+1. **Credenciais já incluídas** no `.env.example`
+2. **Scopes necessários**: O app solicita acesso ao Google Drive
+3. **Arquivo de backup**: `timeflow-backup.json` criado automaticamente
 
 ## ✨ O que torna o TimeFlow único?
 
@@ -45,6 +60,27 @@ Diferente de outros time trackers que exigem botões start/stop e timers manuais
 ## 🚀 Início Rápido
 
 ```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Configurar ambiente
+cp .env.example .env
+
+# 3. Iniciar servidor
+npm run dev
+```
+
+Acesse: **http://localhost:3000**
+
+### Funcionalidades de sincronização:
+
+- **Backup automático**: Dados salvos automaticamente no Google Drive a cada 5 minutos
+- **Restauração automática**: Opção de restaurar dados da nuvem ao fazer login
+- **Logout**: Botão "Sair" para desconectar conta Google
+
+## 🚀 Início Rápido
+
+```bash
 # 1. Clone o repositório
 git clone https://github.com/MrJCRJ/TimeFlow-Tracker.git
 cd TimeFlow-Tracker
@@ -55,9 +91,13 @@ npm install
 # 3. Configure o banco de dados
 npm run db:push
 
-# 4. Configure a API DeepSeek (OBRIGATÓRIO)
+# 4. Configure a API DeepSeek (OBRIGATÓRIO) e Google Auth (OPCIONAL)
 cp .env.example .env
-# Edite .env e adicione: DEEPSEEK_API_KEY=sk-sua-key-aqui
+# Edite .env e adicione:
+# DEEPSEEK_API_KEY=sk-sua-key-aqui
+# GOOGLE_CLIENT_ID=seu-client-id (opcional)
+# GOOGLE_CLIENT_SECRET=seu-client-secret (opcional)
+# NEXTAUTH_SECRET=seu-secret-aleatorio (opcional)
 
 # 5. Inicie o servidor
 npm run dev
@@ -68,8 +108,9 @@ Acesse: **http://localhost:3000**
 > ⚠️ **IMPORTANTE**:
 >
 > - A API DeepSeek é obrigatória para análises inteligentes
+> - Autenticação Google é opcional (para login com conta Google)
 > - Mantenha o terminal rodando enquanto usa o app
-> - Seus dados ficam salvos em `local.db`
+> - Seus dados ficam salvos localmente no navegador
 
 ## 🎯 Como Funciona
 
@@ -132,8 +173,6 @@ timeflow-tracker/
 │   │   ├── chat/          # Chat com IA
 │   │   ├── detect-intent/ # Detecção de intenção
 │   │   ├── flow/          # Fluxo de atividades
-│   │   ├── export-all/    # Exportar dados
-│   │   ├── import/        # Importar dados
 │   │   └── ...
 │   ├── layout.tsx         # Layout principal
 │   └── page.tsx           # Página inicial
@@ -142,7 +181,7 @@ timeflow-tracker/
 │   ├── TodayActivities.tsx # Lista de atividades
 │   ├── InsightsFeed.tsx   # Feed de insights
 │   ├── AutoAnalyzer.tsx   # Análises automáticas
-│   ├── DataManager.tsx    # Exportar/Importar
+│   ├── DataManager.tsx    # Gerenciamento avançado
 │   └── ...
 ├── lib/                   # Lógica de negócio
 │   ├── db/               # Database
@@ -173,26 +212,14 @@ DEEPSEEK_API_KEY=sk-sua-key-aqui
 - ✅ **Privacidade**: Seus dados não treinam o modelo
 - ✅ **Confiável**: Alta disponibilidade
 
-## 💾 Exportar/Importar Dados
-
-O TimeFlow permite fazer backup completo dos seus dados:
-
-1. **Exportar**: Clique no botão de dados (canto inferior esquerdo) → Exportar
-2. **Importar**: Clique no botão de dados → Importar → Selecione o arquivo JSON
-
-O backup inclui:
-
-- ✅ Todas as atividades
-- ✅ Todos os insights (diários, semanais, mensais)
-- ✅ Inputs pendentes (offline queue)
-
 ## 🔒 Privacidade e Segurança
 
-- **Dados locais**: Tudo armazenado em SQLite local
-- **Sem cloud**: Nenhum dado enviado para servidores externos (exceto IA)
+- **Dados locais**: Tudo armazenado em IndexedDB local
+- **Backup na nuvem**: Dados sincronizados automaticamente no Google Drive
+- **Sem cloud desnecessário**: Apenas IA e backup usam servidores externos
 - **Auto-limpeza**: Atividades brutas deletadas após análise diária
 - **Apenas insights**: Somente resumos e análises são mantidos
-- **Você controla**: Exportar, importar ou apagar tudo quando quiser
+- **Sincronização automática**: Dados sempre seguros na nuvem
 
 ## 📊 Schema do Banco
 
