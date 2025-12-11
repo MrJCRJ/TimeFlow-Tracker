@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { db } from "@/lib/db/indexeddb";
 import { cleanOldCache } from "@/lib/smart-responses";
+import { BottomSheet, LoadingSpinner, StatCard, Button } from "./ui";
 
 interface CacheStats {
   totalResponses: number;
@@ -94,108 +95,100 @@ export default function CacheStatsModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-900">
-            ♻️ Cache de Respostas
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+    <BottomSheet
+      isOpen={true}
+      onClose={onClose}
+      title="♻️ Cache de Respostas"
+      actions={
+        <div className="flex gap-2">
+          <Button
+            onClick={handleCleanCache}
+            disabled={cleaning || !stats || stats.totalResponses === 0}
+            loading={cleaning}
+            variant="danger"
+            fullWidth
+            icon="🧹"
           >
-            ×
-          </button>
+            Limpar Antigas
+          </Button>
+          <Button
+            onClick={onClose}
+            variant="secondary"
+            fullWidth
+          >
+            Fechar
+          </Button>
         </div>
-
-        {loading ? (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 mx-auto border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-gray-600">Carregando estatísticas...</p>
+      }
+    >
+      {loading ? (
+        <div className="py-8">
+          <LoadingSpinner size="lg" message="Carregando estatísticas..." />
+        </div>
+      ) : stats ? (
+        <div className="space-y-4">
+          {/* Resumo com StatCards */}
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard
+              label="Respostas Salvas"
+              value={stats.totalResponses}
+              color="blue"
+              size="sm"
+            />
+            <StatCard
+              label="Reutilizações"
+              value={stats.totalReuses}
+              color="green"
+              size="sm"
+            />
           </div>
-        ) : stats ? (
-          <div className="space-y-4">
-            {/* Resumo */}
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <p className="text-xs text-gray-600">Respostas Salvas</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stats.totalResponses}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600">Reutilizações</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {stats.totalReuses}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <p className="text-xs text-gray-600">Economia Estimada</p>
-                <p className="text-xl font-bold text-green-600">
-                  {stats.estimatedSavings}
-                </p>
+
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4">
+            <p className="text-xs text-gray-600 mb-1">Economia Estimada</p>
+            <p className="text-2xl font-bold text-green-600">
+              {stats.estimatedSavings}
+            </p>
+          </div>
+
+          {/* Por Categoria */}
+          {stats.byCategory.size > 0 && (
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <h4 className="font-semibold text-sm text-gray-700 mb-3">
+                Por Categoria
+              </h4>
+              <div className="space-y-2">
+                {Array.from(stats.byCategory.entries()).map(
+                  ([category, count]) => (
+                    <div
+                      key={category}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="text-gray-700">{category}</span>
+                      <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded">
+                        {count}
+                      </span>
+                    </div>
+                  )
+                )}
               </div>
             </div>
+          )}
 
-            {/* Por Categoria */}
-            {stats.byCategory.size > 0 && (
-              <div>
-                <h4 className="font-semibold text-sm text-gray-700 mb-2">
-                  Por Categoria
-                </h4>
-                <div className="space-y-2">
-                  {Array.from(stats.byCategory.entries()).map(
-                    ([category, count]) => (
-                      <div
-                        key={category}
-                        className="flex items-center justify-between text-sm"
-                      >
-                        <span className="text-gray-700">{category}</span>
-                        <span className="font-semibold text-gray-900">
-                          {count}
-                        </span>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Info */}
-            <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-900">
-              <p className="font-semibold mb-1">💡 Como funciona?</p>
-              <p>
-                O sistema reutiliza respostas similares para economizar chamadas
-                à API. Atividades parecidas recebem a mesma resposta
-                motivacional.
-              </p>
-            </div>
-
-            {/* Ações */}
-            <div className="flex gap-2">
-              <button
-                onClick={handleCleanCache}
-                disabled={cleaning || stats.totalResponses === 0}
-                className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {cleaning ? "Limpando..." : "🧹 Limpar Antigas"}
-              </button>
-              <button
-                onClick={onClose}
-                className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium text-sm transition-colors"
-              >
-                Fechar
-              </button>
-            </div>
+          {/* Info */}
+          <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-900">
+            <p className="font-semibold mb-1">💡 Como funciona?</p>
+            <p>
+              O sistema reutiliza respostas similares para economizar chamadas
+              à API. Atividades parecidas recebem a mesma resposta
+              motivacional.
+            </p>
           </div>
-        ) : (
-          <div className="text-center py-8 text-gray-600">
-            Erro ao carregar estatísticas
-          </div>
-        )}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <div className="text-center py-8 text-gray-600">
+          Erro ao carregar estatísticas
+        </div>
+      )}
+    </BottomSheet>
   );
 }
